@@ -1,0 +1,2 @@
+# django-kakebo
+Django Kakebo
