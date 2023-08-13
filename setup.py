@@ -1,3 +1,4 @@
+import glob
 import setuptools
 
 with open("README.md", "r", encoding="utf-8") as fh:
@@ -5,14 +6,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="django_kakebo",
-    version="0.0.5",
+    version="0.0.6",
     author="shadMod",
     author_email="support@shadmod.it",
     description="A simple site made with django and exploiting the kakebo method",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/shadMod/django-kakebo/",
-    # download_url="https://github.com/shadMod/django-jsheet/archive/refs/tags/0.2.4.tar.gz",
+    download_url="https://github.com/shadMod/django-kakebo/archive/refs/tags/0.0.6.tar.gz",
     project_urls={
         "Bug Tracker": "https://github.com/shadMod/django-kakebo/issues/",
     },
@@ -28,11 +29,21 @@ setuptools.setup(
         "Programming Language :: Python :: 3.10",
     ],
     include_package_data=True,
-    packages=[
-        "django_kakebo", "django_kakebo.src.django_kakebo"
-    ],
+    packages=["django_kakebo", "django_kakebo.src.django_kakebo"],
     data_files=[
-        ("themes", ["django_kakebo/src/themes/basic/home/index.html"]),
+        (
+            "static",
+            [
+                fn
+                for fn in glob.iglob(
+                    "django_kakebo/src/django_kakebo/static/**/*", recursive=True
+                )
+            ],
+        ),
+        (
+            "themes",
+            [fn for fn in glob.iglob("django_kakebo/src/themes/**/*", recursive=True)],
+        ),
     ],
-    python_requires=">=3.7"
+    python_requires=">=3.7",
 )
