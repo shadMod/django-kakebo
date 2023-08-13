@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+	{% block title %}
+	<title>
+		Kakebo
+	</title>
+	{% endblock title %}
+
+	{% block style_default %}
+	{% include './partials/head_style.html' %}
+	{% endblock style_default %}
+
+	{% block style %}{% endblock style %}
+
+</head>
+<body>
+
+{% block navbar %}
+{% include './partials/navbar.html' %}
+{% endblock navbar %}
+
+{% block main %}
+<main>
+	{% block content %}{% endblock content %}
+</main>
+{% endblock main %}
+
+{% block footer %}
+{% include './partials/footer.html' %}
+{% endblock footer %}
+
+{% block scripts %}
+{% include './partials/scripts.html' %}
+{% endblock scripts %}
+{% block custom_scripts %}{% endblock custom_scripts %}
+
+</body>
+</html>

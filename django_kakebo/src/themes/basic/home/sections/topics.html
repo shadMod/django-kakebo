@@ -1,0 +1,179 @@
+{% load static %}
+<section class="explore-section section-padding" id="section_1">
+
+	<div class="container">
+
+		<div class="col-12 text-center">
+			<h2 class="mb-4">
+				Scopri il Kakebo
+			</h2>
+		</div>
+
+	</div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+				<li class="nav-item" role="presentation">
+					<button class="nav-link active" id="first-step-tab" data-bs-toggle="tab"
+							data-bs-target="#first-step-tab-pane" type="button" role="tab"
+							aria-controls="first-step-tab-pane" aria-selected="true">
+						I primi passaggi
+					</button>
+				</li>
+
+				<li class="nav-item" role="presentation">
+					<button class="nav-link" id="type-cost-tab" data-bs-toggle="tab"
+							data-bs-target="#type-cost-tab-pane" type="button" role="tab"
+							aria-controls="type-cost-tab-pane" aria-selected="false">
+						Le spese
+					</button>
+				</li>
+
+			</ul>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+
+			<div class="col-12">
+				<div class="tab-content" id="myTabContent">
+
+					<div class="tab-pane fade show active" id="first-step-tab-pane" role="tabpanel"
+						 aria-labelledby="first-step-tab" tabindex="0">
+						<div class="row">
+							<div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0">
+								<div class="custom-block bg-white shadow-lg">
+									<a href="topics-detail.html">
+										<div class="d-flex">
+											<div>
+												<h5 class="mb-2">
+													Budget mensile
+												</h5>
+												<p class="mb-0">
+													Stabilisci il tuo budget mensile
+													<br><br><br><br>
+												</p>
+											</div>
+										</div>
+										<img src="{% static 'basic/assets/imgs/sample.png' %}"
+											 class="custom-block-image img-fluid">
+									</a>
+								</div>
+							</div>
+
+							<div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0">
+								<div class="custom-block bg-white shadow-lg">
+									<a href="topics-detail.html">
+										<div class="d-flex">
+											<div>
+												<h5 class="mb-2">
+													Spese settimanali
+												</h5>
+												<p class="mb-0">
+													Ogni giorno aggiorna tutte le tue spese o almeno due giorni a
+													settimana (la sera, prima di andare a letto)
+												</p>
+											</div>
+										</div>
+										<img src="{% static 'basic/assets/imgs/sample.png' %}"
+											 class="custom-block-image img-fluid">
+									</a>
+								</div>
+							</div>
+
+							<div class="col-lg-4 col-md-6 col-12">
+								<div class="custom-block bg-white shadow-lg">
+									<a href="topics-detail.html">
+										<div class="d-flex">
+											<div>
+												<h5 class="mb-2">
+													Bilancio a fine mese
+												</h5>
+												<p class="mb-0">
+													A fine mese scrivi il tuo bilancio periodico
+													<br><br><br>
+												</p>
+											</div>
+										</div>
+										<img src="{% static 'basic/assets/imgs/sample.png' %}"
+											 class="custom-block-image img-fluid">
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="tab-pane fade" id="type-cost-tab-pane" role="tabpanel"
+						 aria-labelledby="type-cost-tab" tabindex="0">
+						<div class="row">
+							<div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0">
+								<div class="custom-block bg-white shadow-lg">
+									<a href="topics-detail.html">
+										<div class="d-flex">
+											<div>
+												<h5 class="mb-2">
+													Spese di prima necessità
+												</h5>
+											</div>
+										</div>
+										<img src="{% static 'basic/assets/imgs/sample.png' %}"
+											 class="custom-block-image img-fluid">
+									</a>
+								</div>
+							</div>
+							<div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0">
+								<div class="custom-block bg-white shadow-lg">
+									<a href="topics-detail.html">
+										<div class="d-flex">
+											<div>
+												<h5 class="mb-2">
+													Optional
+												</h5>
+											</div>
+										</div>
+										<img src="{% static 'basic/assets/imgs/sample.png' %}"
+											 class="custom-block-image img-fluid">
+									</a>
+								</div>
+							</div>
+							<div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0">
+								<div class="custom-block bg-white shadow-lg">
+									<a href="topics-detail.html">
+										<div class="d-flex">
+											<div>
+												<h5 class="mb-2">
+													Cultura e tempo libero
+												</h5>
+											</div>
+										</div>
+										<img src="{% static 'basic/assets/imgs/sample.png' %}"
+											 class="custom-block-image img-fluid">
+									</a>
+								</div>
+							</div>
+							<div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0">
+								<div class="custom-block bg-white shadow-lg">
+									<a href="topics-detail.html">
+										<div class="d-flex">
+											<div>
+												<h5 class="mb-2">
+													Extra e imprevisti
+												</h5>
+											</div>
+										</div>
+										<img src="{% static 'basic/assets/imgs/sample.png' %}"
+											 class="custom-block-image img-fluid">
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+</section>

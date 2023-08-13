@@ -1,0 +1,42 @@
+<section class="timeline-section section-padding" id="section_3">
+	<div class="section-overlay"></div>
+
+	<div class="container">
+		<div class="row">
+
+			<div class="col-12 text-center">
+				<h2 class="text-white mb-4">
+					5 motivi per usarlo
+				</h2>
+			</div>
+
+			<div class="col-lg-10 col-12 mx-auto">
+				<div class="timeline-container">
+					<ul class="vertical-scrollable-timeline" id="vertical-scrollable-timeline">
+						<div class="list-progress">
+							<div class="inner"></div>
+						</div>
+
+						{% for x in five_reason %}
+						<li>
+							<h4 class="text-white mb-3">
+								{{ x.name }}
+							</h4>
+							<p class="text-white">
+								{{ x.description }}
+							</p>
+							<div class="icon-holder">
+								{% autoescape off %}
+								{{ x.favicon }}
+								{% endautoescape %}
+							</div>
+						</li>
+						{% endfor %}
+
+					</ul>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</section>
