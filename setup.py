@@ -1,19 +1,21 @@
 import glob
 import setuptools
 
+__version__ = "0.0.7"
+
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="django_kakebo",
-    version="0.0.6",
+    version=__version__,
     author="shadMod",
     author_email="support@shadmod.it",
     description="A simple site made with django and exploiting the kakebo method",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/shadMod/django-kakebo/",
-    download_url="https://github.com/shadMod/django-kakebo/archive/refs/tags/0.0.6.tar.gz",
+    download_url=f"https://github.com/shadMod/django-kakebo/archive/refs/tags/{__version__}.tar.gz",
     project_urls={
         "Bug Tracker": "https://github.com/shadMod/django-kakebo/issues/",
     },
@@ -33,16 +35,11 @@ setuptools.setup(
     data_files=[
         (
             "static",
-            [
-                fn
-                for fn in glob.iglob(
-                    "django_kakebo/src/django_kakebo/static/**/*", recursive=True
-                )
-            ],
+            [fn for fn in glob.iglob("django_kakebo/src/django_kakebo/static/**/*", recursive=True) if "." in fn],
         ),
         (
             "themes",
-            [fn for fn in glob.iglob("django_kakebo/src/themes/**/*", recursive=True)],
+            [fn for fn in glob.iglob("django_kakebo/src/themes/**/*", recursive=True) if "." in fn],
         ),
     ],
     python_requires=">=3.7",
