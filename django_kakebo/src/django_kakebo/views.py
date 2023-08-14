@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.views.generic import TemplateView
 
 
@@ -34,3 +36,27 @@ class Index(TemplateView):
             },
         ]
         return context
+
+
+class KakeboWeek(TemplateView):
+    template_name = "basic/kakebo/week.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cell_'] = self.get_list_day("07082023")
+        context['row_'] = [i for i in range(7)]
+        return context
+
+    def get_list_day(self, today: str = None) -> list:
+        if today is None:
+            today = datetime.now()
+        else:
+            today = datetime.strptime(today, "%d%m%Y")
+
+        list_days = []
+        for i in range(7):
+            data__ = f"{today.strftime('%A')} - {today.strftime('%d')}"
+            list_days.append(data__)
+            today += timedelta(days=1)
+
+        return list_days
