@@ -1,0 +1,97 @@
+p {
+    font-size: 16px;
+}
+
+input {
+    width: 100%;
+    border: 0px solid white;
+}
+
+.text-orange {
+    font-size: 18px;
+    color: orange;
+}
+.text-green {
+    font-size: 18px;
+    color: green;
+}
+.text-mediumvioletred {
+    font-size: 18px;
+    color: mediumvioletred;
+}
+.text-steelblue {
+    font-size: 18px;
+    color: steelblue;
+}
+.text-slategrey {
+    font-size: 18px;
+    color: slategrey;
+}
+
+.bx-orange {
+    border-left: 1px solid orange;
+    border-right: 1px solid orange;
+}
+.bb-orange {
+    border-bottom: 1px solid orange;
+}
+.bt-8-orange {
+    border-top: 8px solid orange;
+}
+.bb-dashed-orange {
+    border-bottom: 1px solid orange;
+    border-style: none none dashed none;
+}
+.bx-green {
+    border-left: 1px solid green;
+    border-right: 1px solid green;
+}
+.bb-green {
+    border-bottom: 1px solid green;
+}
+.bt-8-green {
+    border-top: 8px solid green;
+}
+.bb-dashed-green {
+    border-bottom: 1px solid green;
+    border-style: none none dashed none;
+}
+.bx-mediumvioletred {
+    border-left: 1px solid mediumvioletred;
+    border-right: 1px solid mediumvioletred;
+}
+.bb-mediumvioletred {
+    border-bottom: 1px solid mediumvioletred;
+}
+.bt-8-mediumvioletred {
+    border-top: 8px solid mediumvioletred;
+}
+.bb-dashed-mediumvioletred {
+    border-bottom: 1px solid mediumvioletred;
+    border-style: none none dashed none;
+}
+.bx-steelblue {
+    border-left: 1px solid steelblue;
+    border-right: 1px solid steelblue;
+}
+.bb-steelblue {
+    border-bottom: 1px solid steelblue;
+}
+.bt-8-steelblue {
+    border-top: 8px solid steelblue;
+}
+.bb-dashed-steelblue {
+    border-bottom: 1px solid steelblue;
+    border-style: none none dashed none;
+}
+.b-slategrey {
+    border: 1px solid slategrey;
+}
+.bb-dashed-slategrey {
+    border-bottom: 1px solid slategrey;
+    border-style: none none dashed none;
+}
+
+.px-15 {
+    padding: 0 15px;
+}

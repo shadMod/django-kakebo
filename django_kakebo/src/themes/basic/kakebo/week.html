@@ -1,145 +1,44 @@
 {% extends "../core/setup.html" %}
+{% load static %}
 {% load render_kakebo %}
 
+{% block style %}
+<link href="{% static 'basic/assets/css/kakebo-style.css' %}" rel="stylesheet">
+{% endblock style %}
+
 {% block content %}
-<style>
-	p {
-		font-size: 16px;
-	}
-
-	input {
-		width: 100%;
-		border: 0px solid white;
-	}
-
-	.text-orange {
-		font-size: 18px;
-		color: orange;
-	}
-	.text-green {
-		font-size: 18px;
-		color: green;
-	}
-	.text-mediumvioletred {
-		font-size: 18px;
-		color: mediumvioletred;
-	}
-	.text-steelblue {
-		font-size: 18px;
-		color: steelblue;
-	}
-	.text-slategrey {
-		font-size: 18px;
-		color: slategrey;
-	}
-
-	.bx-orange {
-		border-left: 1px solid orange;
-		border-right: 1px solid orange;
-	}
-	.bb-orange {
-		border-bottom: 1px solid orange;
-	}
-	.bt-8-orange {
-		border-top: 8px solid orange;
-	}
-	.bb-dashed-orange {
-		border-bottom: 1px solid orange;
-		border-style: none none dashed none;
-	}
-	.bx-green {
-		border-left: 1px solid green;
-		border-right: 1px solid green;
-	}
-	.bb-green {
-		border-bottom: 1px solid green;
-	}
-	.bt-8-green {
-		border-top: 8px solid green;
-	}
-	.bb-dashed-green {
-		border-bottom: 1px solid green;
-		border-style: none none dashed none;
-	}
-	.bx-mediumvioletred {
-		border-left: 1px solid mediumvioletred;
-		border-right: 1px solid mediumvioletred;
-	}
-	.bb-mediumvioletred {
-		border-bottom: 1px solid mediumvioletred;
-	}
-	.bt-8-mediumvioletred {
-		border-top: 8px solid mediumvioletred;
-	}
-	.bb-dashed-mediumvioletred {
-		border-bottom: 1px solid mediumvioletred;
-		border-style: none none dashed none;
-	}
-	.bx-steelblue {
-		border-left: 1px solid steelblue;
-		border-right: 1px solid steelblue;
-	}
-	.bb-steelblue {
-		border-bottom: 1px solid steelblue;
-	}
-	.bt-8-steelblue {
-		border-top: 8px solid steelblue;
-	}
-	.bb-dashed-steelblue {
-		border-bottom: 1px solid steelblue;
-		border-style: none none dashed none;
-	}
-	.b-slategrey {
-		border: 1px solid slategrey;
-	}
-	.bb-dashed-slategrey {
-		border-bottom: 1px solid slategrey;
-		border-style: none none dashed none;
-	}
-
-	.px-15 {
-		padding: 0 15px;
-	}
-
-
-
-
-
-
-
-</style>
-
 <section class="section-padding">
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-11 m-auto">
+			<div class="col-10">
+				<form method="POST">{% csrf_token %}
 
-				<table class="w-100">
-					<thead>
-					<tr>
-						<th class="text-center" width="12.5%"></th>
-						{% for val in cell_ %}
-						<th class="text-center" width="12.5%"
-							style="border-bottom: 8px solid orange;">
-							{{ val }}
-						</th>
+					<table class="w-100">
+						<thead>
+						<tr>
+							<th class="text-center" width="12.5%"></th>
+							{% for val in cell_ %}
+							<th class="text-center" width="12.5%"
+								style="border-bottom: 8px solid orange;">
+								{{ val }}
+							</th>
+							{% endfor %}
+						</tr>
+						</thead>
+
+						{% for value in list_tr %}
+						{% render_table value.0 value.1 'spese di prima necessità' key_kakebo %}
+						{% white_space_table %}
 						{% endfor %}
-					</tr>
-					</thead>
 
-					{% render_table 'orange' 7 'spese di prima necessità' %}
-					{% white_space_table %}
-					{% render_table 'green' 7 'optional' %}
-					{% white_space_table %}
-					{% render_table 'mediumvioletred' 7 'cultura e tempo libero' %}
-					{% white_space_table %}
-					{% render_table 'steelblue' 7 'extra e imprevisti' %}
+						{% render_table_total %}
 
-					{% white_space_table %}
-					{% render_table_total %}
+					</table>
 
-				</table>
-
+				</form>
+			</div>
+			<div class="col-2">
+				idk
 			</div>
 		</div>
 	</div>
