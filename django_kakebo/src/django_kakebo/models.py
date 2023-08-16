@@ -1,3 +1,4 @@
+from datetime import datetime, date, timedelta
 from logging import getLogger
 
 from django.db import models
@@ -13,6 +14,23 @@ class KakeboWeek(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     week = models.IntegerField(default=1)
     year = models.IntegerField(default=1)
+
+    class Meta:
+        verbose_name_plural = "Kakebo Week"
+
+    def __str__(self):
+        start = self.display_start_week
+        end = self.display_end_week
+        return f"{self.user.username}'s Kakebo - {start} // {end}"
+
+    @property
+    def display_start_week(self) -> date:
+        date_w = f"{self.year}-{self.week}-1"
+        return datetime.strptime(date_w, "%Y-%W-%w").date()
+
+    @property
+    def display_end_week(self) -> date:
+        return self.display_start_week + timedelta(days=6)
 
 
 class KakeboWeekTable(models.Model):
