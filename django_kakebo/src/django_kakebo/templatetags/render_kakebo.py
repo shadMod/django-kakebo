@@ -1,23 +1,26 @@
 from django import template
 from django.utils.safestring import mark_safe
 from django_kakebo.constants import colors as list_colors
-from django_kakebo.models import KakeboWeek
+from django.contrib.auth.models import User
+from django_kakebo.models import KakeboWeek, KakeboWeekTable
 
 register = template.Library()
 
 
 def get_data_byobj(kakebo: dict, color: str, row: int, column: int):
     key_color = int(list_colors.index(color))
+    kakebo = KakeboWeekTable.objects.get(
+        kakebo=kakebo, type_cost=key_color
+    ).data_row
 
     if not any(
             kakebo
-            and kakebo.get(f"{key_color}", "")
-            and kakebo.get(f"{key_color}", "").get(f"{column}", "")
-            and kakebo.get(f"{key_color}", "").get(f"{column}", "").get(f"{row}", "")
+            and kakebo.get(f"{column}", "")
+            and kakebo.get(f"{column}", "").get(f"{row}", "")
     ):
         return None
 
-    return kakebo[f"{key_color}"][f"{column}"][f"{row}"]
+    return kakebo[f"{column}"][f"{row}"]
 
 
 @register.simple_tag
@@ -45,11 +48,11 @@ def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str 
         color = "orange"
 
     # get kakebo table week from db
-    user, year, week = kakebo.split('-')
+    username, year, week = kakebo.split('-')
+    user = User.objects.get(username=username)
     obj = KakeboWeek.objects.get(
-        # user=user,
-        year=year, week=week,
-    ).data_row
+        user=user, year=year, week=week,
+    )
 
     html = "<tbody>"
     for i in range(row):
@@ -79,7 +82,7 @@ def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str 
             """
             if data_ is not None:
                 html += f"""
-                    {data_['desc']} - {data_['value']}
+                    {data_['desc'][:15]} => € {'%.2f' % data_['value']}
                 """
             html += f"""
                         <i class="bi bi-pencil-square"></i>
@@ -106,7 +109,6 @@ def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str 
                                     </label>
                                     <textarea class="form-control" id="id_{tag_name_modal}_desc" 
                                         name="{tag_name_modal}_desc" rows="4" cols="50"
-                                        
             """
 
             html += 'placeholder="description">'
@@ -121,6 +123,7 @@ def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str 
                                     </label>
                                     <input type="number" class="form-control" id="id_{tag_name_modal}_value"
                                         name="{tag_name_modal}_value" style="border: 1px solid grey"
+                                        placeholder="0.00" min="0" step="0.01"
             """
 
             html += f"value={data_['value']}>" if data_ is not None else ">"
@@ -146,7 +149,7 @@ def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str 
 
 @register.filter(is_safe=True)
 @register.simple_tag
-def render_table_total(row: int = 7):
+def render_table_total(totals: list):
     html = """
     <tbody>
         <tr>
@@ -156,11 +159,11 @@ def render_table_total(row: int = 7):
                 </h5>
             </td>
     """
-    for i in range(row):
-        html += """
+    for value in totals:
+        html += f"""
             <td class="b-slategrey px-15">
-                <p class="bb-dashed-slategrey mb-0">
-                    <input>
+                <p class="bb-dashed-slategrey mb-0 text-end">
+                    {value} €
                 </p>
             </td>
         """
