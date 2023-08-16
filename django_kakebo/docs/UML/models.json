@@ -1,0 +1,35 @@
+{
+	"KakeboWeek": {
+		"user": {
+			"class": "user.models.User()"
+		},
+		"week": {
+			"class": "django.db.models.IntegerField",
+			"default": "1"
+		},
+		"year": {
+			"class": "django.db.models.IntegerField",
+			"default": "1"
+		},
+		"method": {}
+	},
+	"KakeboWeekTable": {
+		"data_row": {
+			"class": "django.db.models.JSONField",
+			"default": "dict"
+		},
+		"type_cost": {
+			"class": "django.db.models.PositiveSmallIntegerField",
+			"default": "0",
+			"choices": {
+				"LIST_TYPE": [
+					"(0, 'basic necessities')",
+					"(1, 'optional')",
+					"(2, 'culture and leisure')",
+					"(3, 'extras and unexpected')"
+				]
+			}
+		},
+		"method": {}
+	}
+}

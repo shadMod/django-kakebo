@@ -1,7 +1,7 @@
 import glob
 import setuptools
 
-__version__ = "0.0.7"
+__version__ = "0.0.10"
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -31,7 +31,10 @@ setuptools.setup(
         "Programming Language :: Python :: 3.10",
     ],
     include_package_data=True,
-    packages=["django_kakebo", "django_kakebo.src.django_kakebo"],
+    packages=[
+        "django_kakebo", "django_kakebo.src.django_kakebo", "django_kakebo.src.django_kakebo.migrations",
+        "django_kakebo.src.django_kakebo.templatetags", "django_kakebo.src.django_kakebo.views"
+    ],
     data_files=[
         (
             "static",
