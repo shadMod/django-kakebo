@@ -51,11 +51,17 @@ class KakeboWeekTable(models.Model):
     def display_type_cost_color(self) -> str:
         return colors[self.type_cost]
 
-    def get_column(self, clm: int):
+    def get_column(self, clm: int) -> list:
         clm = self.data_row.get(f'{clm}', {})
         if clm:
-            return sum(x.get('value', 0) for x in clm.values())
-        return 0
+            return [(x.get('desc', ""), x.get('value', 0)) for x in clm.values()]
+        return []
 
-    def get_cell(self):
-        pass
+    def get_cell(self, clm: int, row: int) -> tuple:
+        return self.get_column(clm)[row]
+
+    def total_column(self, clm: int) -> float:
+        clm = self.get_column(clm)
+        if clm:
+            return sum([x[1] for x in clm])
+        return float(0)
