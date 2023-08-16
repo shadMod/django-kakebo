@@ -13,6 +13,6 @@ class KakeboWeekForm(forms.Form):
                     self.fields[f"{tag_name}_desc"] = forms.CharField(
                         max_length=200, required=False
                     )
-                    self.fields[f"{tag_name}_value"] = forms.IntegerField(
+                    self.fields[f"{tag_name}_value"] = forms.FloatField(
                         required=False
                     )
