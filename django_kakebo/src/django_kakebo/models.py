@@ -35,7 +35,7 @@ class KakeboWeek(models.Model):
 
 class KakeboWeekTable(models.Model):
     kakebo = models.ForeignKey(KakeboWeek, on_delete=models.CASCADE)
-    data_row = models.JSONField(default=dict)
+    data_row: dict = models.JSONField(default=dict)
 
     LIST_TYPE = [
         (0, "basic necessities"),
@@ -43,11 +43,12 @@ class KakeboWeekTable(models.Model):
         (2, "culture and leisure"),
         (3, "extras and unexpected"),
     ]
-    type_cost = models.PositiveSmallIntegerField(
+    type_cost: int = models.PositiveSmallIntegerField(
         choices=LIST_TYPE,
         default=0,
     )
 
+    @property
     def display_type_cost_color(self) -> str:
         return colors[self.type_cost]
 
