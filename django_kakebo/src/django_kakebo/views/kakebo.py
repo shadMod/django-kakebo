@@ -4,9 +4,9 @@ from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView, FormView
 
-from .models import KakeboWeek
-from .forms import KakeboWeekForm
-from .constants import colors
+from ..models import KakeboWeek, KakeboWeekTable
+from ..forms import KakeboWeekForm
+from ..constants import colors
 
 
 class Index(TemplateView):
@@ -52,41 +52,48 @@ class KakeboWeekFormView(FormView):
         if self.request.user.is_anonymous:
             pass
 
-        self.obj, _ = KakeboWeek.objects.get_or_create(
-            # user=self.kwargs["username"],
-            year=self.kwargs["year"],
-            week=self.kwargs["week"],
-        )
+        # init year and week in self
         self.year = kwargs['year']
         self.week = kwargs['week']
+
+        # init obj with relative tables (=> tb_{color}) in self
+        self.obj, _ = KakeboWeek.objects.get_or_create(
+            user=self.request.user,
+            year=self.year,
+            week=self.week,
+        )
+        for i, color in enumerate(colors):
+            table, _ = KakeboWeekTable.objects.get_or_create(
+                kakebo=self.obj, type_cost=i
+            )
+            setattr(self, f'tb_{color}', table)
+
+        # init datetime from week and year param in self.time_
         self.time_ = self.get_time
         return super().dispatch(*args, **kwargs)
 
     def form_valid(self, form):
         cd = form.cleaned_data
 
-        data = {}
-        for j in range(4):
-            data[j] = {}
-            color = colors[j]
+        for color in colors:
+            data = {}
             for clm, day in enumerate(self.get_list_day(self.time_)):
-                data[j][clm] = {}
-                for i in range(9):
-                    tag_name = f"tag_name_{color}_{clm}_{i}"
+                data[clm] = {}
+                for row in range(9):
+                    tag_name = f"tag_name_{color}_{clm}_{row}"
                     desc = cd.get(f"{tag_name}_desc", None)
                     value = cd.get(f"{tag_name}_value", None)
                     if desc or value:
-                        data[j][clm][i] = {"desc": desc, "value": value}
-
-        self.obj.data_row = data
-        self.obj.save()
+                        data[clm][row] = {"desc": desc, "value": value}
+            obj = getattr(self, f'tb_{color}')
+            obj.data_row = data
+            obj.save()
         return self.get_success_url()
 
     def get_success_url(self):
         return HttpResponseRedirect(
             reverse_lazy(
                 "kakebo-week", kwargs={
-                    "username": self.kwargs["username"],
                     "year": self.kwargs["year"],
                     "week": self.kwargs["week"],
                 },
@@ -103,7 +110,17 @@ class KakeboWeekFormView(FormView):
 
         context['cell_'] = self.get_list_day(self.time_)
         context['row_'] = [i for i in range(7)]
-        context['key_kakebo'] = f'{self.kwargs["username"]}-{self.kwargs["year"]}-{self.kwargs["week"]}'
+        context['key_kakebo'] = f'{self.request.user.username}-{self.kwargs["year"]}-{self.kwargs["week"]}'
+
+        totals_days = []
+        for i in range(7):
+            totals = []
+            for color in colors:
+                obj = getattr(self, f'tb_{color}')
+                totals.append(obj.get_column(i))
+            totals_days.append('%.2f' % (sum(totals)))
+
+        context["totals_days"] = totals_days
         return context
 
     @property
