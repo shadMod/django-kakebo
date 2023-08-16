@@ -6,13 +6,17 @@ from django.conf import settings
 from .constants import colors
 
 User = settings.AUTH_USER_MODEL
-log = getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class KakeboWeek(models.Model):
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     week = models.IntegerField(default=1)
     year = models.IntegerField(default=1)
+
+
+class KakeboWeekTable(models.Model):
+    kakebo = models.ForeignKey(KakeboWeek, on_delete=models.CASCADE)
     data_row = models.JSONField(default=dict)
 
     LIST_TYPE = [
@@ -28,3 +32,12 @@ class KakeboWeek(models.Model):
 
     def display_type_cost_color(self) -> str:
         return colors[self.type_cost]
+
+    def get_column(self, clm: int):
+        clm = self.data_row.get(f'{clm}', {})
+        if clm:
+            return sum(x.get('value', 0) for x in clm.values())
+        return 0
+
+    def get_cell(self):
+        pass
