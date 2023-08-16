@@ -68,8 +68,8 @@ class KakeboWeekFormView(FormView):
             )
             setattr(self, f'tb_{color}', table)
 
-        # init datetime from week and year param in self.time_
-        self.time_ = self.get_time
+        # init date from week and year param in self.time_
+        self.time_ = self.obj.display_start_week
         return super().dispatch(*args, **kwargs)
 
     def form_valid(self, form):
@@ -117,16 +117,11 @@ class KakeboWeekFormView(FormView):
             totals = []
             for color in colors:
                 obj = getattr(self, f'tb_{color}')
-                totals.append(obj.get_column(i))
+                totals.append(obj.total_column(i))
             totals_days.append('%.2f' % (sum(totals)))
 
         context["totals_days"] = totals_days
         return context
-
-    @property
-    def get_time(self) -> datetime:
-        date_w = f"{self.year}-{self.week}-1"
-        return datetime.strptime(date_w, "%Y-%W-%w")
 
     @staticmethod
     def get_list_day(today: datetime) -> list:
