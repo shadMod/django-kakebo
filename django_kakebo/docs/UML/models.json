@@ -11,7 +11,18 @@
 			"class": "django.db.models.IntegerField",
 			"default": "1"
 		},
-		"method": {}
+		"method": {
+			"property": [
+				{
+					"name": "display_start_week",
+					"rtype": "data"
+				},
+				{
+					"name": "display_end_week",
+					"rtype": "data"
+				}
+			]
+		}
 	},
 	"KakeboWeekTable": {
 		"data_row": {
@@ -30,6 +41,49 @@
 				]
 			}
 		},
-		"method": {}
+		"method": {
+			"property": [
+				{
+					"name": "display_type_cost_color",
+					"rtype": "str"
+				}
+			],
+			"another": [
+				{
+					"name": "get_column",
+					"params": [
+						{
+							"name": "clm",
+							"type": "int"
+						}
+					],
+					"rtype": "list"
+				},
+				{
+					"name": "get_cell",
+					"params": [
+						{
+							"name": "clm",
+							"type": "int"
+						},
+						{
+							"name": "row",
+							"type": "int"
+						}
+					],
+					"rtype": "tuple"
+				},
+				{
+					"name": "total_column",
+					"params": [
+						{
+							"name": "clm",
+							"type": "int"
+						}
+					],
+					"rtype": "float"
+				}
+			]
+		}
 	}
 }
