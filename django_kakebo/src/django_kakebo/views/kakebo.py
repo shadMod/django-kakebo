@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView, FormView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from ..models import KakeboWeek, KakeboWeekTable
 from ..forms import KakeboWeekForm
@@ -44,13 +45,13 @@ class Index(TemplateView):
         return context
 
 
-class KakeboWeekFormView(FormView):
+class KakeboWeekFormView(LoginRequiredMixin, FormView):
     form_class = KakeboWeekForm
     template_name = "basic/kakebo/week.html"
 
-    def dispatch(self, *args, **kwargs):
-        if self.request.user.is_anonymous:
-            pass
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
 
         # init year and week in self
         self.year = kwargs['year']
@@ -70,7 +71,7 @@ class KakeboWeekFormView(FormView):
 
         # init date from week and year param in self.time_
         self.time_ = self.obj.display_start_week
-        return super().dispatch(*args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         cd = form.cleaned_data
@@ -88,6 +89,7 @@ class KakeboWeekFormView(FormView):
             obj = getattr(self, f'tb_{color}')
             obj.data_row = data
             obj.save()
+
         return self.get_success_url()
 
     def get_success_url(self):
