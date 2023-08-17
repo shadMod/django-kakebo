@@ -106,8 +106,9 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
         context = super().get_context_data(**kwargs)
 
         list_tr = []
+        list_type = KakeboWeekTable.LIST_TYPE
         for i, lenrows in enumerate([9, 7, 7, 7]):
-            list_tr.append((colors[i], lenrows))
+            list_tr.append((colors[i], lenrows, list_type[i][1]))
         context['list_tr'] = list_tr
 
         context['cell_'] = self.get_list_day(self.time_)

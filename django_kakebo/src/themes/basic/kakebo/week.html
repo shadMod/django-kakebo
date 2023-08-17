@@ -1,4 +1,5 @@
 {% extends "../core/setup.html" %}
+{% load i18n %}
 {% load static %}
 {% load render_kakebo %}
 
@@ -10,24 +11,26 @@
 <section class="section-padding">
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-10">
+			<div class="col-11 m-auto">
 				<form method="POST">{% csrf_token %}
 
 					<table class="w-100">
 						<thead>
 						<tr>
-							<th class="text-center" width="12.5%"></th>
+							<th class="text-center" width="7%"></th>
 							{% for val in cell_ %}
-							<th class="text-center" width="12.5%"
-								style="border-bottom: 8px solid orange;">
+							<th class="text-center" width="11.5%">
 								{{ val }}
 							</th>
 							{% endfor %}
+							<th class="text-center" width="12.5%">
+								{% trans 'Week releases' %}
+							</th>
 						</tr>
 						</thead>
 
 						{% for value in list_tr %}
-						{% render_table value.0 value.1 'spese di prima necessità' key_kakebo %}
+						{% render_table value.0 value.1 value.2 key_kakebo %}
 						{% white_space_table %}
 						{% endfor %}
 
@@ -36,9 +39,6 @@
 					</table>
 
 				</form>
-			</div>
-			<div class="col-2">
-				idk
 			</div>
 		</div>
 	</div>
