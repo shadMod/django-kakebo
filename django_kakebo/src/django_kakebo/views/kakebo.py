@@ -107,7 +107,7 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
 
         list_tr = []
         list_type = KakeboWeekTable.LIST_TYPE
-        for i, lenrows in enumerate([9, 7, 7, 7]):
+        for i, lenrows in enumerate([10, 7, 7, 7]):
             list_tr.append((colors[i], lenrows, list_type[i][1]))
         context['list_tr'] = list_tr
 
