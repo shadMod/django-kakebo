@@ -52,6 +52,18 @@ class KakeboWeekTable(models.Model):
     def display_type_cost_color(self) -> str:
         return colors[self.type_cost]
 
+    @property
+    def display_total_table(self) -> float:
+        return sum([self.total_column(i) for i in range(len(self.data_row))])
+
+    @property
+    def list_sort_cost(self) -> list:
+        data = []
+        for row in self.data_row.values():
+            data.extend([v for v in row.values()])
+        sort_ = sorted([x for x in data], key=lambda x: x['value'], reverse=True)
+        return sort_
+
     def get_column(self, clm: int) -> list:
         clm = self.data_row.get(f'{clm}', {})
         if clm:
@@ -60,6 +72,18 @@ class KakeboWeekTable(models.Model):
 
     def get_cell(self, clm: int, row: int) -> tuple:
         return self.get_column(clm)[row]
+
+    def get_list_sort_cost(self, max_row: int) -> list:
+        max_row -= 1
+        list_cost = self.list_sort_cost[:max_row]
+
+        if list_cost:
+            other_cost = 0
+            for i in self.list_sort_cost[max_row:]:
+                other_cost += i["value"]
+            if len(list_cost) >= max_row:
+                list_cost.append({"desc": "others", "value": other_cost})
+        return list_cost
 
     def total_column(self, clm: int) -> float:
         clm = self.get_column(clm)

@@ -15,11 +15,11 @@
 			"property": [
 				{
 					"name": "display_start_week",
-					"rtype": "data"
+					"rtype": "datetime.date"
 				},
 				{
 					"name": "display_end_week",
-					"rtype": "data"
+					"rtype": "datetime.date"
 				}
 			]
 		}
@@ -46,6 +46,14 @@
 				{
 					"name": "display_type_cost_color",
 					"rtype": "str"
+				},
+				{
+					"name": "display_total_table",
+					"rtype": "list"
+				},
+				{
+					"name": "list_sort_cost",
+					"rtype": "list"
 				}
 			],
 			"another": [
@@ -72,6 +80,16 @@
 						}
 					],
 					"rtype": "tuple"
+				},
+				{
+					"name": "get_list_sort_cost",
+					"params": [
+						{
+							"name": "max_row",
+							"type": "int"
+						}
+					],
+					"rtype": "list"
 				},
 				{
 					"name": "total_column",
