@@ -8,9 +8,9 @@ register = template.Library()
 
 
 def get_data_byobj(kakebo: dict, color: str, row: int, column: int):
-    key_color = int(list_colors.index(color))
+    type_cost = int(list_colors.index(color))
     kakebo = KakeboWeekTable.objects.get(
-        kakebo=kakebo, type_cost=key_color
+        kakebo=kakebo, type_cost=type_cost
     ).data_row
 
     if not any(
@@ -142,6 +142,9 @@ def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str 
                 </div>
             </div>
             """
+        # sidebar
+        html += render_sidebar(obj, i, color, row - 1)
+        # close row
         html += "</tr>"
     html += "</tbody>"
     return mark_safe(html)
@@ -172,3 +175,40 @@ def render_table_total(totals: list):
     </tbody>
     """
     return mark_safe(html)
+
+
+def render_sidebar(kakebo, row: int, color: str, total_row: int):
+    # init cell html
+    html = f"""
+        <td class="m-3" width="7.4%">
+    """
+
+    type_cost = int(list_colors.index(color))
+    obj = KakeboWeekTable.objects.get(
+        kakebo=kakebo, type_cost=type_cost
+    )
+
+    # init and set value
+    if row == total_row:
+        val = ("totale", obj.display_total_table)
+    else:
+        data = obj.get_list_sort_cost(total_row)
+        if data and row < len(data):
+            data = data[row]
+            val = (data['desc'], data['value'])
+        else:
+            val = ("", "")
+
+    html += f'<p class="mx-3 p-1" style="color: white; background: orange;">' if val == 'totale' else '<p class="p-3">'
+
+    html += f"""
+            {val[0]}
+            </p>
+        </td>
+        <td class="p-3" width="5%">
+            <p class="bb-dashed-{color} mb-2 text-end">
+             € {val[1]}
+            </p>
+        </td>
+    """
+    return html
