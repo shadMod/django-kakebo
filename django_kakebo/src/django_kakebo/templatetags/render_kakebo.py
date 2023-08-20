@@ -1,8 +1,10 @@
+from datetime import datetime
+
 from django import template
 from django.utils.safestring import mark_safe
 from django_kakebo.constants import colors as list_colors
 from django.contrib.auth.models import User
-from django_kakebo.models import KakeboWeek, KakeboWeekTable
+from django_kakebo.models import KakeboMonth, KakeboWeek, KakeboWeekTable
 
 register = template.Library()
 
@@ -49,9 +51,17 @@ def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str 
 
     # get kakebo table week from db
     username, year, week = kakebo.split('-')
+    # get user
     user = User.objects.get(username=username)
+    date_w = f"{year}-{week}-1"
+    # get KakeboMonth()
+    month = KakeboMonth.objects.get(
+        user=user,
+        month=datetime.strptime(date_w, "%Y-%W-%w").month,
+        year=year,
+    )
     obj = KakeboWeek.objects.get(
-        user=user, year=year, week=week,
+        user=user, month=month, week=week,
     )
 
     html = "<tbody>"

@@ -184,10 +184,20 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
         self.year = kwargs['year']
         self.week = kwargs['week']
 
+        # get month by year and week
+        date_w = f"{self.year}-{self.week}-1"
+        month = datetime.strptime(date_w, "%Y-%W-%w").month
+        # get KakeboMonth()
+        self.obj_month, _ = KakeboMonth.objects.get_or_create(
+            user=self.request.user,
+            month=month,
+            year=self.kwargs['year'],
+        )
+
         # init obj with relative tables (=> tb_{color}) in self
         self.obj, _ = KakeboWeek.objects.get_or_create(
             user=self.request.user,
-            year=self.year,
+            month=self.obj_month,
             week=self.week,
         )
         for i, color in enumerate(colors):
