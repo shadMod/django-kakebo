@@ -95,3 +95,19 @@ input {
 .px-15 {
     padding: 0 15px;
 }
+
+.bg-orange {
+    background: orange;
+}
+.bg-green {
+    background: green;
+}
+.bg-mediumvioletred {
+    background: mediumvioletred;
+}
+.bg-steelblue {
+    background: steelblue;
+}
+.bg-slategrey {
+    background: slategrey;
+}
