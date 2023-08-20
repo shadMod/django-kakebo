@@ -1,0 +1,232 @@
+{% extends "../core/setup.html" %}
+{% load i18n %}
+{% load static %}
+{% load render_budget %}
+
+{% block style %}
+<link href="{% static 'basic/assets/css/c_style.css' %}" rel="stylesheet">
+<link href="{% static 'basic/assets/css/kakebo-style.css' %}" rel="stylesheet">
+<link href="{% static 'basic/assets/css/calendar.css' %}" rel="stylesheet">
+{% endblock style %}
+
+{% block content %}
+<section class="section-padding">
+	<div class="container-fluid mt-5">
+		<form method="POST" enctype="multipart/form-data">{% csrf_token %}
+			<input type="hidden" name="form-TOTAL_FORMS" value="20" id="id_form-TOTAL_FORMS">
+			<input type="hidden" name="form-INITIAL_FORMS" value="0" id="id_form-INITIAL_FORMS">
+			<input type="hidden" name="form-MIN_NUM_FORMS" value="0" id="id_form-MIN_NUM_FORMS">
+			<input type="hidden" name="form-MAX_NUM_FORMS" value="1000" id="id_form-MAX_NUM_FORMS">
+
+			{% if form.errors %}
+			{{ form.errors }}
+			{% endif %}
+
+			<div class="row">
+
+				<div class="col-12 col-lg-7">
+
+					<div class="container-fluid">
+						<div class="grid-calendar">
+							<div class="row calendar-week-header">
+
+								{% for day in day_list %}
+								<div class="col-1 grid-cell">
+									<a>
+										<div>
+											<span>
+												{{ day }}
+											</span>
+										</div>
+									</a>
+								</div>
+								{% endfor %}
+
+							</div>
+
+							{% for nr_week, week in week_list.items %}
+							<div class="row calendar-week">
+								{% for day in week %}
+								<div class="col-1 grid-cell {{ day.0 }}">
+									{% if day.0 %}
+									<a href="{% url 'kakebo-calendar' view.kwargs.year day.2 %}">
+										{% else %}
+										<a href="{% url 'kakebo-week' view.kwargs.year nr_week %}">
+											{% endif %}
+											<div>
+												<span>
+													{{ day.1 }}
+												</span>
+											</div>
+										</a>
+								</div>
+								{% endfor %}
+							</div>
+							{% endfor %}
+
+						</div>
+					</div>
+				</div>
+
+				<div class="col-12 col-lg-5 mt-5">
+					<div class="w-100">
+						<h3 class="text-center">
+							{{ month }}
+						</h3>
+						<h5 class="text-center mt-4">
+							{% trans 'record monthly incomes and steady outflowes' %}
+						</h5>
+
+						<div class="w-100 pe-4 text-end">
+							<button type="submit" class="btn btn-outline-basic">
+								{% trans 'Save' %}
+							</button>
+						</div>
+
+						<table class="w-100">
+							<thead>
+							<tr>
+								<th class="w-25 align-top text-end ptx-1rem">
+									<p class="text-end pe-4 text-dark fn-20">
+										{% trans 'income' %}
+									</p>
+								</th>
+								<th class="w-25 text-center bs-10-white bb-5-cyan-basic ptx-1rem">
+									<p class="fn-16">
+										{% trans 'date' %}
+									</p>
+								</th>
+								<th class="w-25 text-center bs-10-white bb-5-cyan-basic ptx-1rem">
+									<p class="fn-16">
+										{% trans 'item' %}
+									</p>
+								</th>
+								<th class="w-25 text-center bs-10-white bb-5-cyan-basic ptx-1rem">
+									<p class="fn-16">
+										{% trans 'value' %}
+									</p>
+								</th>
+							</tr>
+							</thead>
+							<tbody>
+
+							{% render_month_budget 'admin-8-2023' 'income' %}
+
+							</tbody>
+						</table>
+
+						<table class="w-100 mt-5">
+							<thead>
+							<tr>
+								<th class="w-25 align-top text-end ptx-1rem">
+									<p class="text-end pe-4 text-dark fn-20">
+										{% trans 'steady outflow' %}
+									</p>
+								</th>
+								<th class="w-25 text-center bs-10-white bb-5-blue-basic ptx-1rem">
+									<p class="fn-16">
+										{% trans 'date' %}
+									</p>
+								</th>
+								<th class="w-25 text-center bs-10-white bb-5-blue-basic ptx-1rem">
+									<p class="fn-16">
+										{% trans 'item' %}
+									</p>
+								</th>
+								<th class="w-25 text-center bs-10-white bb-5-blue-basic ptx-1rem">
+									<p class="fn-16">
+										{% trans 'value' %}
+									</p>
+								</th>
+							</tr>
+							</thead>
+							<tbody>
+
+							{% render_month_budget 'admin-8-2023' 'outflow' %}
+
+							</tbody>
+						</table>
+
+					</div>
+				</div>
+
+				<div class="container mt-5">
+					<div class="row mt-5">
+						<div class="col-12 col-lg-8">
+							<div class="mb-3">
+								<label for="form-0-spare_cost" class="form-label">
+									{% trans 'What expense items do you intend to save on?' %}
+								</label>
+								<textarea class="form-control" name="form-0-spare_cost" cols="40" rows="5"
+										  id="id_form-0-spare_cost">{{ spare_cost }}</textarea>
+							</div>
+							<div class="mb-3">
+								<label for="form-0-target_reach" class="form-label">
+									{% trans 'How can you reach your goals?' %}
+								</label>
+								<textarea class="form-control" name="form-0-target_reach" cols="40" rows="5"
+										  id="id_form-0-target_reach">{{ target_reach }}</textarea>
+							</div>
+							<div class="mb-3">
+								<label for="form-0-spare" class="form-label">
+									{% trans 'How much would you like to save this month?' %}
+								</label>
+								<input class="form-control" type="number" step="any"
+									   id="id_form-0-spare" name="form-0-spare" value="{{ spare }}">
+							</div>
+							<div class="w-100 mt-5">
+								<button type="submit" class="btn btn-outline-basic">
+									{% trans 'Save' %}
+								</button>
+							</div>
+						</div>
+						<div class="col-12 col-lg-4 text-center m-auto">
+							<div class="circle m-auto b-cyan-basic">
+								<p class="p-35">
+									{% trans 'income' %}
+									<br/>
+									€ {{ income }}
+								</p>
+							</div>
+							<div class="demo bg-cyan-basic">
+								<hr>
+							</div>
+							<div class="circle m-auto b-blue-basic">
+								<p class="p-35">
+									{% trans 'outflow' %}
+									<br/>
+									€ {{ outflow }}
+								</p>
+							</div>
+							<div class="demo bg-blue-basic">
+								<hr>
+							</div>
+							<div class="circle m-auto">
+								<p class="p-25">
+									{% trans 'desired savings' %}
+									<br/>
+									€ {{ spare }}
+								</p>
+							</div>
+						</div>
+						<div class="col-12 text-center mt-5">
+							<h4>
+								{% if income == '0.00' %}
+								{% trans 'Enter values in income' %}...
+								{% elif outflow == '0.00' %}
+								{% trans 'Insert values in steady outflow' %}...
+								{% elif spare == '0.00' %}
+								{% trans 'Insert desired savings' %}...
+								{% else %}
+								{% trans 'Available money' %}: € {{ available_money }}
+								{% endif %}
+							</h4>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</form>
+	</div>
+</section>
+{% endblock content %}

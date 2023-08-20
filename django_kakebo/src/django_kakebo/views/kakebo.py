@@ -45,6 +45,131 @@ class Index(TemplateView):
         return context
 
 
+class SelectYearWeekFormView(LoginRequiredMixin, FormView):
+    form_class = SelectYearWeekFormSet
+    template_name = "basic/kakebo/calendar.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+
+        # set month and year in kwargs if they aren't exist
+        if not self.kwargs.get("month"):
+            self.kwargs["month"] = date.today().month
+        if not self.kwargs.get("year"):
+            self.kwargs["year"] = date.today().year
+
+        # init obj in self
+        self.obj, _ = KakeboMonth.objects.get_or_create(
+            user=self.request.user,
+            month=self.kwargs['month'],
+            year=self.kwargs['year'],
+        )
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        budget = {}
+        for i, row in enumerate(form.cleaned_data):
+            budget[f'_income_{i}'] = {}
+            budget[f'_outflow_{i}'] = {}
+            for key, value in row.items():
+                if '_income' in key:
+                    if isinstance(value, (datetime, date)):
+                        value = value.strftime("%Y-%m-%d")
+                    value = "" if value is None else value
+                    budget[f'_income_{i}'][key] = value
+                if '_outflow' in key and value:
+                    if isinstance(value, (datetime, date)):
+                        value = value.strftime("%Y-%m-%d")
+                    budget[f'_outflow_{i}'][key] = value
+        self.obj.budget = budget
+
+        cd_0 = form.cleaned_data[0]
+        if cd_0:
+            self.obj.spare_cost = cd_0.get("spare_cost", "")
+            self.obj.target_reach = cd_0.get("target_reach", "")
+            self.obj.spare = cd_0.get("spare") if cd_0.get("spare") else 0
+
+        self.obj.save()
+        return self.get_success_url()
+
+    def get_success_url(self):
+        return HttpResponseRedirect(
+            reverse_lazy(
+                "kakebo-calendar", kwargs={
+                    "year": self.kwargs["year"],
+                    "month": self.kwargs["month"],
+                },
+            )
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        month, year = self.kwargs['month'], self.kwargs['year']
+
+        context["day_list"] = [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
+        ]
+        context["week_list"] = self.get_week_dict(
+            monthcalendar(year, month)
+        )
+
+        context["month"] = f"{month_name[month]} {year}"
+        context["income"], context["outflow"] = self.obj.display_totals_budget
+        context["spare_cost"] = self.obj.spare_cost
+        context["target_reach"] = self.obj.target_reach
+        context["spare"] = "%.2f" % self.obj.spare
+        available_money = self.obj.display_available_money
+        context["available_money"] = "%.2f" % available_money if available_money else None
+
+        return context
+
+    def get_week_dict(self, week_list) -> dict:
+        nr_week = self.get_nr_week(week_list)
+        for week in week_list:
+            for i, day in enumerate(week):
+                week[i] = ("", day)
+
+        # set first week
+        week = week_list[0]
+        if ("", 0) in week:
+            day = 31
+            month = self.kwargs['month'] - 1
+            for i in sorted(find_indices(week, ("", 0)), reverse=True):
+                week[i] = ("another-month", day, month)
+                day -= 1
+
+        # set last week
+        week = week_list[-1]
+        if ("", 0) in week:
+            day = 1
+            month = self.kwargs['month'] + 1
+            for i in find_indices(week, ("", 0)):
+                week[i] = ("another-month", day, month)
+                day += 1
+
+        week_dict = {}
+        for i, week in enumerate(week_list):
+            week_dict[nr_week[i]] = week
+
+        return week_dict
+
+    def get_nr_week(self, week_list):
+        nr_week = []
+        for week in week_list:
+            day = [x for x in week if x][0]
+            nr_week.append(date(self.kwargs['year'], self.kwargs['month'], day).isocalendar().week)
+        return nr_week
+
+
 class KakeboWeekFormView(LoginRequiredMixin, FormView):
     form_class = KakeboWeekForm
     template_name = "basic/kakebo/week.html"
