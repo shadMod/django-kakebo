@@ -44,9 +44,11 @@ class KakeboMonth(models.Model):
         outflow = float(0)
         for key, val in self.budget.items():
             if "_income_" in key:
-                income += float(val.get("value_income", 0))
+                value = val.get("value_income") if val.get("value_income") else 0
+                income += float(value)
             if "_outflow_" in key:
-                outflow += float(val.get("value_outflow", 0))
+                value = val.get("value_outflow") if val.get("value_outflow") else 0
+                outflow += float(value)
         return income, outflow
 
 
