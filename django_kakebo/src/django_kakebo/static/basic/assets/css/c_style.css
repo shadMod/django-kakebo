@@ -1,0 +1,46 @@
+.fn-16 {
+    font-size: 16px;
+}
+.fn-20 {
+    font-size: 20px;
+}
+
+.btn-outline-basic {
+    color: #50baae;
+    border: 2px solid #80d0c7;
+}
+.btn-outline-basic:hover {
+    color: white;
+    border-color: white;
+    background: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
+}
+
+.ptx-1rem {
+    padding: 1rem 1rem 0px 1rem !important
+}
+
+.bs-10-white {
+    border-left: 10px solid white;
+}
+
+.b-cyan-basic {
+    border: 1px solid #80d0c7;
+}
+.bb-5-cyan-basic {
+    border-bottom: 5px solid #80d0c7;
+}
+
+.b-blue-basic {
+    border: 1px solid #13547a;
+}
+.bb-5-blue-basic {
+    border-bottom: 5px solid #13547a;
+}
+
+.bg-cyan-basic {
+    background: #80d0c7;
+}
+.bg-blue-basic {
+    background: #13547a;
+}
+
