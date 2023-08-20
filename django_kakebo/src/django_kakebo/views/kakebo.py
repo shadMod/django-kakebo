@@ -261,6 +261,7 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
             totals_days.append('%.2f' % (sum(totals)))
 
         context["totals_days"] = totals_days
+        context["total_week"] = sum(list(map(float, totals_days)))
         return context
 
     @staticmethod

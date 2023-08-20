@@ -4,6 +4,7 @@ from django import template
 from django.utils.safestring import mark_safe
 from django_kakebo.constants import colors as list_colors
 from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
 from django_kakebo.models import KakeboMonth, KakeboWeek, KakeboWeekTable
 
 register = template.Library()
@@ -162,13 +163,15 @@ def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str 
 
 @register.filter(is_safe=True)
 @register.simple_tag
-def render_table_total(totals: list):
+def render_table_total(totals: list, total_week: int):
     html = """
     <tbody>
         <tr>
             <td class="align-top text-end p-3" rowspan="{row}">
                 <h5 class="text-slategrey">
-                    totale
+    """
+    html += _("total")
+    html += """
                 </h5>
             </td>
     """
@@ -180,6 +183,18 @@ def render_table_total(totals: list):
                 </p>
             </td>
         """
+    html += f"""
+        <td class="px-15">
+            <p class="bg-slategrey mb-0 px-1 text-white">
+                totale della settimana
+            </p>
+        </td>
+        <td class="b-slategrey px-15">
+            <p class="bb-dashed-slategrey mb-0 text-end">
+                {total_week} €
+            </p>
+        </td>
+    """
     html += """
         </tr>
     </tbody>
@@ -200,7 +215,8 @@ def render_sidebar(kakebo, row: int, color: str, total_row: int):
 
     # init and set value
     if row == total_row:
-        val = ("totale", obj.display_total_table)
+        val = (_("total"), obj.display_total_table)
+        html += f'<p class="mx-3 p-1 bg-{color} text-white">'
     else:
         data = obj.get_list_sort_cost(total_row)
         if data and row < len(data):
@@ -208,8 +224,7 @@ def render_sidebar(kakebo, row: int, color: str, total_row: int):
             val = (data['desc'], data['value'])
         else:
             val = ("", "")
-
-    html += f'<p class="mx-3 p-1" style="color: white; background: orange;">' if val == 'totale' else '<p class="p-3">'
+        html += '<p class="p-3">'
 
     html += f"""
             {val[0]}
