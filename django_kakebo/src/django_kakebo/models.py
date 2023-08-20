@@ -10,10 +10,50 @@ User = settings.AUTH_USER_MODEL
 logger = getLogger(__name__)
 
 
+class KakeboMonth(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    month = models.PositiveSmallIntegerField(default=1)
+    year = models.PositiveSmallIntegerField(default=1980)
+    budget: dict = models.JSONField(default=dict)
+    spare_cost = models.TextField(blank=True, null=True, default="")
+    target_reach = models.TextField(blank=True, null=True, default="")
+    spare = models.FloatField(blank=True, null=True, default=0)
+
+    class Meta:
+        verbose_name_plural = "Kakebo Month"
+
+    def __str__(self):
+        return f"{self.user.username}'s Kakebo - {self.month}/{self.year}"
+
+    @property
+    def display_totals_budget(self) -> (float, float):
+        income = "%.2f" % self.get_totals_budget[0]
+        outflow = "%.2f" % self.get_totals_budget[1]
+        return income, outflow
+
+    @property
+    def display_available_money(self):
+        income, outflow = self.display_totals_budget
+        if self.spare:
+            return float(income) - float(outflow) - self.spare
+        return None
+
+    @property
+    def get_totals_budget(self) -> (float, float):
+        income = float(0)
+        outflow = float(0)
+        for key, val in self.budget.items():
+            if "_income_" in key:
+                income += float(val.get("value_income", 0))
+            if "_outflow_" in key:
+                outflow += float(val.get("value_outflow", 0))
+        return income, outflow
+
+
 class KakeboWeek(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    month = models.ForeignKey(KakeboMonth, on_delete=models.CASCADE)
     week = models.IntegerField(default=1)
-    year = models.IntegerField(default=1)
 
     class Meta:
         verbose_name_plural = "Kakebo Week"
@@ -25,7 +65,7 @@ class KakeboWeek(models.Model):
 
     @property
     def display_start_week(self) -> date:
-        date_w = f"{self.year}-{self.week}-1"
+        date_w = f"{self.month.year}-{self.week}-1"
         return datetime.strptime(date_w, "%Y-%W-%w").date()
 
     @property
