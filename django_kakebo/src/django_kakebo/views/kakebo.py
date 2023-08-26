@@ -260,6 +260,7 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
 
         list_tr = []
         list_type = KakeboWeekTable.LIST_TYPE
+        # TODO: add management in back-office view
         for i, lenrows in enumerate([10, 7, 7, 7]):
             list_tr.append((colors[i], lenrows, list_type[i][1]))
         context['list_tr'] = list_tr
