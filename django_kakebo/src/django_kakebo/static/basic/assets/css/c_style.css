@@ -1,8 +1,19 @@
+.w-33 {
+    width: 33%;
+}
+
 .fn-16 {
     font-size: 16px;
 }
 .fn-20 {
     font-size: 20px;
+}
+
+.text-lightseagreen {
+    color: lightseagreen;
+}
+.text-basic-roow {
+    color: #717275;
 }
 
 .btn-outline-basic {
@@ -33,8 +44,16 @@
 .b-blue-basic {
     border: 1px solid #13547a;
 }
+.bx-blue-basic {
+    border-left: 1px solid #13547a;
+    border-right: 1px solid #13547a;
+}
 .bb-5-blue-basic {
     border-bottom: 5px solid #13547a;
+}
+.bb-dashed-blue-basic {
+    border-bottom: 1px solid #13547a;
+    border-style: none none dashed none;
 }
 
 .bg-cyan-basic {
@@ -42,4 +61,46 @@
 }
 .bg-blue-basic {
     background: #13547a;
+}
+.bg-lightseagreen {
+    background: lightseagreen;
+}
+
+.b-slategrey {
+    border: 1px solid slategrey;
+}
+.bs-slategrey {
+    border-left: 1px solid slategrey;
+}
+.bb-dashed-slategrey {
+    border-bottom: 1px solid slategrey;
+    border-style: none none dashed none;
+}
+
+.b-lightseagreen {
+    border: 1px solid lightseagreen;
+}
+.bt-lightseagreen {
+    border-top: 1px solid lightseagreen;
+}
+.bx-lightseagreen {
+    border-left: 1px solid lightseagreen;
+    border-right: 1px solid lightseagreen;
+}
+.bs-lightseagreen {
+    border-left: 1px solid lightseagreen;
+}
+.be-lightseagreen {
+    border-right: 1px solid lightseagreen;
+}
+.bb-lightseagreen {
+    border-bottom: 1px solid lightseagreen;
+}
+.bb-dashed-lightseagreen {
+    border-bottom: 1px solid lightseagreen;
+    border-style: none none dashed none;
+}
+
+input[type=checkbox] {
+  display: none;
 }

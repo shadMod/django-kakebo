@@ -84,13 +84,6 @@ input {
     border-bottom: 1px solid steelblue;
     border-style: none none dashed none;
 }
-.b-slategrey {
-    border: 1px solid slategrey;
-}
-.bb-dashed-slategrey {
-    border-bottom: 1px solid slategrey;
-    border-style: none none dashed none;
-}
 
 .px-15 {
     padding: 0 15px;
