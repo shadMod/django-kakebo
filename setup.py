@@ -32,7 +32,7 @@ setuptools.setup(
         "Bug Tracker": "https://github.com/shadMod/django-kakebo/issues/",
     },
     classifiers=[
-        "Development Status :: 3 - Beta",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
