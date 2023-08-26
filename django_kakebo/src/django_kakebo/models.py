@@ -74,6 +74,10 @@ class KakeboWeek(models.Model):
     def display_end_week(self) -> date:
         return self.display_start_week + timedelta(days=6)
 
+    @property
+    def total_week(self):
+        return sum([obj.display_total_table for obj in KakeboWeekTable.objects.filter(kakebo=self)])
+
 
 class KakeboWeekTable(models.Model):
     kakebo = models.ForeignKey(KakeboWeek, on_delete=models.CASCADE)
@@ -132,3 +136,104 @@ class KakeboWeekTable(models.Model):
         if clm:
             return sum([x[1] for x in clm])
         return float(0)
+
+
+class KakeboEndOfMonthBalance(models.Model):
+    month = models.ForeignKey(KakeboMonth, on_delete=models.CASCADE)
+    electricity = models.FloatField(default=0)
+    gas = models.FloatField(default=0)
+    tel_internet = models.FloatField(default=0)
+    water = models.FloatField(default=0)
+    waste = models.FloatField(default=0)
+    costs_data: dict = models.JSONField(default=dict)
+    answer_1 = models.TextField(blank=True, null=True, default="")
+    answer_2 = models.TextField(blank=True, null=True, default="")
+    answer_3 = models.TextField(blank=True, null=True, default="")
+
+    LIST_TYPE = [
+        (0, ""),
+        (1, "yes"),
+        (2, "almost"),
+        (3, "no"),
+    ]
+    conclusion: int = models.PositiveSmallIntegerField(
+        choices=LIST_TYPE, default=0,
+    )
+
+    @property
+    def display_electricity(self):
+        return "%.2f" % self.electricity
+
+    @property
+    def display_gas(self):
+        return "%.2f" % self.gas
+
+    @property
+    def display_tel_internet(self):
+        return "%.2f" % self.tel_internet
+
+    @property
+    def display_water(self):
+        return "%.2f" % self.water
+
+    @property
+    def display_waste(self):
+        return "%.2f" % self.waste
+
+    @property
+    def display_total_utilities(self):
+        return "%.2f" % self.total_utilities
+
+    @property
+    def total_utilities(self):
+        attrs = ["electricity", "gas", "tel_internet", "water", "waste"]
+        return sum([getattr(self, x) for x in attrs])
+
+    @property
+    def display_diff_available_costs(self):
+        return "%.2f" % self.diff_available_costs
+
+    @property
+    def display_total_month(self):
+        return "%.2f" % self.total_month
+
+    @property
+    def total_month(self):
+        val = sum([x.total_week for x in KakeboWeek.objects.filter(month=self.month)])
+        val += self.total_utilities
+        return val
+
+    @property
+    def diff_available_costs(self):
+        return self.month.display_available_money - self.total_month
+
+    def get_key_list(self):
+        """
+        get a list of all key in costs_data
+        """
+        return list(self.costs_data.keys())
+
+    def get_key_cost(self, nr_key: int = 0) -> str:
+        key_list = self.get_key_list()
+        if nr_key <= len(key_list) - 1:
+            key = key_list[nr_key]
+        else:
+            key = ""
+        return key
+
+    def tot_costs(self, nr_key: int, counter0: bool = True) -> float:
+        """
+        :counter0:  True if the counter starts from zero, if not put it false
+        """
+        if not counter0:
+            nr_key -= 1
+        key = self.get_key_cost(nr_key)
+        val = 0
+        if key:
+            val = sum([x for x in self.costs_data[key].values() if x])
+        return val
+
+
+# settings models
+class UtilitiesCost(models.Model):
+    name = models.CharField(max_length=150)
