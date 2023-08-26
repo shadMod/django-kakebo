@@ -77,11 +77,13 @@
 							{% trans 'record monthly incomes and steady outflowes' %}
 						</h5>
 
+						{% if not disabled %}
 						<div class="w-100 pe-4 text-end">
 							<button type="submit" class="btn btn-outline-basic">
 								{% trans 'Save' %}
 							</button>
 						</div>
+						{% endif %}
 
 						<table class="w-100">
 							<thead>
@@ -110,7 +112,7 @@
 							</thead>
 							<tbody>
 
-							{% render_month_budget 'admin-8-2023' 'income' %}
+							{% render_month_budget key_kakebo 'income' 4 disabled %}
 
 							</tbody>
 						</table>
@@ -142,7 +144,7 @@
 							</thead>
 							<tbody>
 
-							{% render_month_budget 'admin-8-2023' 'outflow' %}
+							{% render_month_budget key_kakebo 'outflow' 4 disabled %}
 
 							</tbody>
 						</table>
@@ -150,7 +152,7 @@
 					</div>
 				</div>
 
-				<div class="container mt-5">
+				<div class="container-1000 mt-5">
 					<div class="row mt-5">
 						<div class="col-12 col-lg-8">
 							<div class="mb-3">
@@ -158,27 +160,29 @@
 									{% trans 'What expense items do you intend to save on?' %}
 								</label>
 								<textarea class="form-control" name="form-0-spare_cost" cols="40" rows="5"
-										  id="id_form-0-spare_cost">{{ spare_cost }}</textarea>
+										  id="id_form-0-spare_cost" {{ disabled }}>{{ spare_cost }}</textarea>
 							</div>
 							<div class="mb-3">
 								<label for="form-0-target_reach" class="form-label">
 									{% trans 'How can you reach your goals?' %}
 								</label>
 								<textarea class="form-control" name="form-0-target_reach" cols="40" rows="5"
-										  id="id_form-0-target_reach">{{ target_reach }}</textarea>
+										  id="id_form-0-target_reach" {{ disabled }}>{{ target_reach }}</textarea>
 							</div>
 							<div class="mb-3">
 								<label for="form-0-spare" class="form-label">
 									{% trans 'How much would you like to save this month?' %}
 								</label>
-								<input class="form-control" type="number" step="any"
+								<input class="form-control" type="number" step="any" {{ disabled }}
 									   id="id_form-0-spare" name="form-0-spare" value="{{ spare }}">
 							</div>
+							{% if not disabled %}
 							<div class="w-100 mt-5">
 								<button type="submit" class="btn btn-outline-basic">
 									{% trans 'Save' %}
 								</button>
 							</div>
+							{% endif %}
 						</div>
 						<div class="col-12 col-lg-4 text-center m-auto">
 							<div class="circle m-auto b-cyan-basic">

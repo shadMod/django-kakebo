@@ -2,10 +2,10 @@ from datetime import datetime
 
 from django import template
 from django.utils.safestring import mark_safe
-from django_kakebo.constants import colors as list_colors
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
-from django_kakebo.models import KakeboMonth, KakeboWeek, KakeboWeekTable
+from ..constants import colors as list_colors
+from ..models import KakeboMonth, KakeboWeek, KakeboWeekTable
 
 register = template.Library()
 
@@ -43,7 +43,7 @@ def white_space_table():
 
 @register.filter(is_safe=True)
 @register.simple_tag
-def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str = None):
+def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str = None, disabled: bool = False):
     """
     Render table with a determinate color and row
     """
@@ -78,7 +78,7 @@ def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str 
             """
         for clm in range(7):  # 7 days in one week
             if i == 0:
-                html += f'<td class="bt-8-{color} bx-{color} px-15">'
+                html += f'<td class="bt-8-{color} bx-{color} pt-3 px-15">'
             elif i == row - 1:
                 html += f'<td class="bb-{color} bx-{color} px-15">'
             else:
@@ -88,71 +88,78 @@ def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str 
 
             tag_name_modal = f"tag_name_{color}_{clm}_{i}"
             html += f"""
-                <p class="bb-dashed-{color} mb-2 text-end">
-                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#{tag_name_modal}">
+                <p class="w-100 mb-2 bb-dashed-{color} text-end">
             """
+
             if data_ is not None:
+                html += f"{data_['desc'][:15]} => € {'%.2f' % data_['value']}"
+            else:
+                html += "<br />"
+
+            if not disabled:
                 html += f"""
-                    {data_['desc'][:15]} => € {'%.2f' % data_['value']}
+                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#{tag_name_modal}">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                    </p>
                 """
-            html += f"""
-                        <i class="bi bi-pencil-square"></i>
-                    </button>
-                </p>
-            </td>
-            
-            <div class="modal fade" id="{tag_name_modal}" tabindex="-1"
-                aria-labelledby="{tag_name_modal}_label" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="{tag_name_modal}_label">
-                                Descrizione e valore
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                                
-                            <div class="form-group row">
-                                <div class="col-sm-10">
-                                    <label class="col-form-label">
-                                        Descrizione:
-                                    </label>
-                                    <textarea class="form-control" id="id_{tag_name_modal}_desc" 
-                                        name="{tag_name_modal}_desc" rows="4" cols="50"
-            """
 
-            html += 'placeholder="description">'
-            html += data_["desc"] if data_ is not None else ""
-            html += "</textarea>"
+            html += "</p></td>"
 
-            html += f"""
-                                </div>
-                                <div class="col-sm-2">
-                                    <label class="col-form-label">
-                                        Valore:
-                                    </label>
-                                    <input type="number" class="form-control" id="id_{tag_name_modal}_value"
-                                        name="{tag_name_modal}_value" style="border: 1px solid grey"
-                                        placeholder="0.00" min="0" step="0.01"
-            """
-
-            html += f"value={data_['value']}>" if data_ is not None else ">"
-
-            html += """
-                                </div>
+            if not disabled:
+                html += f"""
+                <div class="modal fade" id="{tag_name_modal}" tabindex="-1"
+                    aria-labelledby="{tag_name_modal}_label" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="{tag_name_modal}_label">
+                                    Descrizione e valore
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
+                            <div class="modal-body">
+                                    
+                                <div class="form-group row">
+                                    <div class="col-sm-10">
+                                        <label class="col-form-label">
+                                            Descrizione:
+                                        </label>
+                                        <textarea class="form-control" id="id_{tag_name_modal}_desc" 
+                                            name="{tag_name_modal}_desc" rows="4" cols="50"
+                """
 
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">
-                                Salva
-                            </button>
+                html += 'placeholder="description">'
+                html += data_["desc"] if data_ is not None else ""
+                html += "</textarea>"
+
+                html += f"""
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="col-form-label">
+                                            Valore:
+                                        </label>
+                                        <input type="number" class="form-control" id="id_{tag_name_modal}_value"
+                                            name="{tag_name_modal}_value" style="border: 1px solid grey"
+                                            placeholder="0.00" min="0" step="0.01"
+                """
+
+                html += f"value={data_['value']}>" if data_ is not None else ">"
+
+                html += """
+                                    </div>
+                                </div>
+    
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">
+                                    Salva
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            """
+                """
         # sidebar
         html += render_sidebar(obj, i, color, row - 1)
         # close row

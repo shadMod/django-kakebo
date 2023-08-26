@@ -4,6 +4,7 @@
 {% load render_kakebo %}
 
 {% block style %}
+<link href="{% static 'basic/assets/css/c_style.css' %}" rel="stylesheet">
 <link href="{% static 'basic/assets/css/kakebo-style.css' %}" rel="stylesheet">
 {% endblock style %}
 
@@ -30,7 +31,7 @@
 						</thead>
 
 						{% for value in list_tr %}
-						{% render_table value.0 value.1 value.2 key_kakebo %}
+						{% render_table value.0 value.1 value.2 key_kakebo disabled %}
 						{% white_space_table %}
 						{% endfor %}
 

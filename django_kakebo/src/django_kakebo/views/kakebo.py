@@ -68,32 +68,40 @@ class SelectYearWeekFormView(LoginRequiredMixin, FormView):
             year=self.kwargs['year'],
         )
 
+        obj_reports = KakeboEndOfMonthBalance.objects.filter(month=self.obj)
+        if obj_reports:
+            self.obj_report = obj_reports[0]
+            self.conclusion = self.obj_report.conclusion
+        else:
+            self.obj_report, self.conclusion = None, None
+
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        budget = {}
-        for i, row in enumerate(form.cleaned_data):
-            budget[f'_income_{i}'] = {}
-            budget[f'_outflow_{i}'] = {}
-            for key, value in row.items():
-                if '_income' in key:
-                    if isinstance(value, (datetime, date)):
-                        value = value.strftime("%Y-%m-%d")
-                    value = "" if value is None else value
-                    budget[f'_income_{i}'][key] = value
-                if '_outflow' in key and value:
-                    if isinstance(value, (datetime, date)):
-                        value = value.strftime("%Y-%m-%d")
-                    budget[f'_outflow_{i}'][key] = value
-        self.obj.budget = budget
+        if not self.obj_report.conclusion:
+            budget = {}
+            for i, row in enumerate(form.cleaned_data):
+                budget[f'_income_{i}'] = {}
+                budget[f'_outflow_{i}'] = {}
+                for key, value in row.items():
+                    if '_income' in key:
+                        if isinstance(value, (datetime, date)):
+                            value = value.strftime("%Y-%m-%d")
+                        value = "" if value is None else value
+                        budget[f'_income_{i}'][key] = value
+                    if '_outflow' in key and value:
+                        if isinstance(value, (datetime, date)):
+                            value = value.strftime("%Y-%m-%d")
+                        budget[f'_outflow_{i}'][key] = value
+            self.obj.budget = budget
 
-        cd_0 = form.cleaned_data[0]
-        if cd_0:
-            self.obj.spare_cost = cd_0.get("spare_cost", "")
-            self.obj.target_reach = cd_0.get("target_reach", "")
-            self.obj.spare = cd_0.get("spare") if cd_0.get("spare") else 0
+            cd_0 = form.cleaned_data[0]
+            if cd_0:
+                self.obj.spare_cost = cd_0.get("spare_cost", "")
+                self.obj.target_reach = cd_0.get("target_reach", "")
+                self.obj.spare = cd_0.get("spare") if cd_0.get("spare") else 0
 
-        self.obj.save()
+            self.obj.save()
         return self.get_success_url()
 
     def get_success_url(self):
@@ -125,13 +133,14 @@ class SelectYearWeekFormView(LoginRequiredMixin, FormView):
         )
 
         context["month"] = f"{month_name[month]} {year}"
+        context['key_kakebo'] = f'{self.request.user.username}-{self.kwargs["month"]} - {self.kwargs["year"]}'
         context["income"], context["outflow"] = self.obj.display_totals_budget
         context["spare_cost"] = self.obj.spare_cost
         context["target_reach"] = self.obj.target_reach
         context["spare"] = "%.2f" % self.obj.spare
         available_money = self.obj.display_available_money
         context["available_money"] = "%.2f" % available_money if available_money else None
-
+        context['disabled'] = "disabled" if self.conclusion else ""
         return context
 
     def get_week_dict(self, week_list) -> dict:
@@ -208,25 +217,32 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
 
         # init date from week and year param in self.time_
         self.time_ = self.obj.display_start_week
+
+        obj_reports = KakeboEndOfMonthBalance.objects.filter(month=self.obj_month)
+        if obj_reports:
+            self.obj_report = obj_reports[0]
+            self.conclusion = self.obj_report.conclusion
+        else:
+            self.obj_report, self.conclusion = None, None
+
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        cd = form.cleaned_data
-
-        for color in colors:
-            data = {}
-            for clm, day in enumerate(self.get_list_day(self.time_)):
-                data[clm] = {}
-                for row in range(9):
-                    tag_name = f"tag_name_{color}_{clm}_{row}"
-                    desc = cd.get(f"{tag_name}_desc", None)
-                    value = cd.get(f"{tag_name}_value", None)
-                    if desc or value:
-                        data[clm][row] = {"desc": desc, "value": value}
-            obj = getattr(self, f'tb_{color}')
-            obj.data_row = data
-            obj.save()
-
+        if self.conclusion is not None:
+            cd = form.cleaned_data
+            for color in colors:
+                data = {}
+                for clm, day in enumerate(self.get_list_day(self.time_)):
+                    data[clm] = {}
+                    for row in range(9):
+                        tag_name = f"tag_name_{color}_{clm}_{row}"
+                        desc = cd.get(f"{tag_name}_desc", None)
+                        value = cd.get(f"{tag_name}_value", None)
+                        if desc or value:
+                            data[clm][row] = {"desc": desc, "value": value}
+                obj = getattr(self, f'tb_{color}')
+                obj.data_row = data
+                obj.save()
         return self.get_success_url()
 
     def get_success_url(self):
@@ -262,6 +278,7 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
 
         context["totals_days"] = totals_days
         context["total_week"] = sum(list(map(float, totals_days)))
+        context['disabled'] = "disabled" if self.conclusion else ""
         return context
 
     @staticmethod
