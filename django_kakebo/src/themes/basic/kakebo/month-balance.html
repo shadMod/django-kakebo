@@ -1,0 +1,243 @@
+{% extends "../core/setup.html" %}
+{% load i18n %}
+{% load static %}
+{% load render_balance %}
+
+{% block style %}
+<link href="{% static 'basic/assets/css/c_style.css' %}" rel="stylesheet">
+<link href="{% static 'basic/assets/css/kakebo-style.css' %}" rel="stylesheet">
+<link href="{% static 'basic/assets/css/calendar.css' %}" rel="stylesheet">
+{% endblock style %}
+
+{% block content %}
+<section class="section-padding">
+	<form method="POST">{% csrf_token %}
+		<div class="container-fluid mt-5">
+			<div class="row">
+
+				{% if obj_conclusion %}
+				<div class="col-12 my-5 text-center">
+					{% if obj_conclusion == 'yes' %}
+					<h4>
+						Complimenti! Concediti un piccolo premio, ma attenzione a non vanificare gli sforzi fatti.
+						<br>
+						Scegli una cosa che possa darti realmente gratificazione spendendo poco.
+						<br>
+						Per qualche spunto puoi vedere tra nel nostro FAQs.
+					</h4>
+					{% elif obj_conclusion == 'almost' or obj_conclusion == 'no' %}
+					<h4>
+						Peccato <i class="bi bi-emoji-frown h1 text-primary"></i>
+						<br>
+						Che cosa non ha funzionato?
+						<br>
+						Che cosa puoi fare per migliorare il mese proprio?
+					</h4>
+					<div class="w-25 mb-3 pt-3 m-auto">
+						{{ form.answer_3 }}
+					</div>
+					<button type="submit" class="btn btn-primary w-25">
+						Invia risposta
+					</button>
+					{% endif %}
+				</div>
+				{% endif %}
+
+				<div class="col-12 col-lg-6 px-5">
+
+					<div class="container-fluid">
+						<div class="row">
+							{% for color in list_colors %}
+							<div class="col-12 col-lg-6 my-3">
+								{% render_total_weeks key_kakebo color %}
+							</div>
+							{% endfor %}
+						</div>
+					</div>
+
+				</div>
+				<div class="col-12 col-lg-6 px-5">
+
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-12 my-3">
+								<table class="w-100">
+									<thead>
+									<tr>
+										<th colspan="2">
+											<p class="bg-blue-basic py-2 ps-3 text-white">
+												utilities
+											</p>
+										</th>
+									</tr>
+									</thead>
+									<tbody>
+
+									{% for utility in list_utilities %}
+									<tr>
+										<td class="bx-blue-basic px-15">
+											<p class="mb-2">
+												{% trans utility.0 %}
+											</p>
+										</td>
+										<td class="px-15">
+											<p class="bb-dashed-blue-basic mb-2 text-end">
+												<input name="{{ utility.0 }}" id="id_{{ utility.0 }}"
+													   type="number" step="any" min="0" value="{{ utility.1 }}"
+													   class="text-basic-roow text-end" {{ disabled }}>
+											</p>
+										</td>
+									</tr>
+									{% endfor %}
+
+									<tr>
+										<td class="bg-blue-basic bx-blue-basic px-15">
+											<p class="mt-2 mb-1 text-white">
+												{% trans 'total' %}
+											</p>
+										</td>
+										<td class="px-15">
+											<p class="bb-dashed-blue-basic mb-2 text-end">
+												€ {{ tot_utilities }}
+											</p>
+										</td>
+									</tr>
+
+									</tbody>
+								</table>
+
+								<p class="my-4 px-3">
+									Inserisci qui sotto le voci che ritieni più sensibili (eg bar, carburante, etc),
+									se ci sono tra le spese che hai inserito nelle categorie principali
+								</p>
+
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-12 col-lg-6">
+											{% render_cost_relevant key_kakebo 1 len_week disabled %}
+										</div>
+										<div class="col-12 col-lg-6">
+											{% render_cost_relevant key_kakebo 2 len_week disabled %}
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="col-12 my-5 px-5">
+
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-12 col-lg-4 px-5">
+
+								<div class="mb-3">
+									<label for="form-answer_1" class="form-label">
+										Confrontando i totali di tutte le tabelle: quali sono le voci di spesa che hanno
+										inciso di più questo mese? Te lo aspettavi?
+									</label>
+									{{ form.answer_1 }}
+								</div>
+								<div class="mb-3">
+									<label for="form-answer_2" class="form-label">
+										Ci sono uscite che potresti tagliare?
+									</label>
+									{{ form.answer_2 }}
+								</div>
+
+							</div>
+							<div class="col-12 col-lg-4">
+
+								<table class="w-100">
+									{% render_month_cost key_kakebo len_week %}
+								</table>
+
+							</div>
+							<div class="col-12 col-lg-4">
+
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-12 col-lg-6">
+											<p class="text-end">
+												<i class="bi bi-wallet h3 pe-3 text-lightseagreen"></i>
+												Quanto denaro avevi a disposizione?
+											</p>
+										</div>
+										<div class="col-12 col-lg-6">
+											<p class="bb-dashed-lightseagreen text-center">
+												€ {{ tot_available }}
+											</p>
+										</div>
+										<div class="col-12 col-lg-6">
+											<p class="text-end">
+												<i class="bi bi-cash-coin h3 pe-3 text-lightseagreen"></i>
+												Quanto hai speso?
+											</p>
+										</div>
+										<div class="col-12 col-lg-6">
+											<p class="bb-dashed-lightseagreen text-center">
+												€ {{ tot_costs }}
+											</p>
+										</div>
+										<div class="col-12 col-lg-6">
+											<p class="text-end">
+												<i class="bi bi-piggy-bank h3 pe-3 text-lightseagreen"></i>
+												Quanto hai risparmiato?
+											</p>
+										</div>
+										<div class="col-12 col-lg-6">
+											<p class="bb-dashed-lightseagreen text-center">
+												€ {{ diff_available_costs }}
+											</p>
+										</div>
+										<div class="col-12 my-5">
+											<button type="submit" class="btn btn-primary w-100">
+												Salva modifiche
+											</button>
+										</div>
+									</div>
+
+								</div>
+
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			{% if not obj_conclusion %}
+			<div class="row">
+				<div class="col-12">
+					<div class="container">
+						<div class="row">
+							<div class="col-12 text-center my-4">
+								<h5>
+									Hai raggiunto i tuoi obiettivi?
+								</h5>
+							</div>
+							<div class="row px-3">
+								<div class="col-4 text-center">
+									{% render_answer_smile 0 %}
+								</div>
+								<div class="col-4 text-center">
+									{% render_answer_smile 1 %}
+								</div>
+								<div class="col-4 text-center">
+									{% render_answer_smile 2 %}
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endif %}
+
+		</div>
+	</form>
+</section>
+{% endblock content %}

@@ -272,3 +272,96 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
             list_days.append(data__)
             today += timedelta(days=1)
         return list_days
+
+
+class EndOfMonthBalanceSheetFormView(LoginRequiredMixin, FormView):
+    form_class = EndOfMonthBalanceSheetForm
+    template_name = "basic/kakebo/month-balance.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+
+        user = self.request.user
+        self.obj_month = KakeboMonth.objects.get(
+            user=user,
+            month=self.kwargs["month"],
+            year=self.kwargs["year"],
+        )
+        self.obj_list = KakeboWeek.objects.filter(user=user, month=self.obj_month)
+        self.obj, _ = KakeboEndOfMonthBalance.objects.get_or_create(
+            month=self.obj_month
+        )
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        cd = form.cleaned_data
+
+        if not self.obj.conclusion:
+            self.obj.electricity = cd['electricity'] if cd['electricity'] else 0
+            self.obj.gas = cd['gas'] if cd['gas'] else 0
+            self.obj.tel_internet = cd['tel_internet'] if cd['tel_internet'] else 0
+            self.obj.water = cd['water'] if cd['water'] else 0
+            self.obj.waste = cd['waste'] if cd['waste'] else 0
+            self.obj.answer_1 = cd['answer_1']
+            self.obj.answer_2 = cd['answer_2']
+
+            costs = {}
+            for j in range(2):
+                key_name = cd[f"cost_{j}_name"]
+                if key_name:
+                    costs[key_name] = {}
+                    for i in range(1, 6):
+                        costs[key_name][f"cost_{i}"] = cd[f"cost_{j}_{i}"]
+            self.obj.costs_data = costs
+
+            # save KakeboEndOfMonthBalance()
+            self.obj.save()
+
+            if "answer_yes_check" in self.request.POST:
+                self.obj.conclusion = 1
+            if "answer_almost_check" in self.request.POST:
+                self.obj.conclusion = 2
+            if "answer_no_check" in self.request.POST:
+                self.obj.conclusion = 3
+            self.obj.save()
+
+        self.obj.answer_3 = cd['answer_3']
+        self.obj.save()
+
+        return self.get_success_url()
+
+    def get_success_url(self):
+        return HttpResponseRedirect(
+            reverse_lazy(
+                "kakebo-balance", kwargs={
+                    "year": self.kwargs["year"],
+                    "month": self.kwargs["month"],
+                },
+            )
+        )
+
+    def get_initial(self, **kwargs):
+        initial = {
+            "conclusion": self.obj.conclusion,
+            "answer_1": self.obj.answer_1,
+            "answer_2": self.obj.answer_2,
+            "answer_3": self.obj.answer_3,
+        }
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['list_colors'] = colors
+        context['key_kakebo'] = f'{self.request.user.username}-{self.kwargs["year"]}-{self.kwargs["month"]}'
+        list_utilities = ["electricity", "gas", "tel_internet", "water", "waste"]
+        context['list_utilities'] = [(x, getattr(self.obj, f"display_{x}")) for x in list_utilities]
+        context['tot_utilities'] = self.obj.display_total_utilities
+        context['len_week'] = len(self.obj_list)
+        context['tot_available'] = self.obj_month.display_available_money
+        context['tot_costs'] = self.obj.display_total_month
+        context['diff_available_costs'] = self.obj.display_diff_available_costs
+        context['obj_conclusion'] = self.obj.get_conclusion_display
+        context['disabled'] = "disabled" if self.obj.conclusion else ""
+        return context
