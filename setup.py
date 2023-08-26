@@ -2,7 +2,7 @@ import os
 import glob
 import setuptools
 
-__version__ = "0.0.13"
+__version__ = "0.1.0"
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -32,7 +32,7 @@ setuptools.setup(
         "Bug Tracker": "https://github.com/shadMod/django-kakebo/issues/",
     },
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 3 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
@@ -63,5 +63,5 @@ setuptools.setup(
         ),
     ],
     install_requires=get_install_requires(),
-    python_requires=">=3.7",
+    python_requires=">=3.8",
 )
