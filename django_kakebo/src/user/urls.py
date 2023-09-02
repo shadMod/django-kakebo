@@ -14,63 +14,63 @@ urlpatterns = []
 
 urlpatterns += [
     path(
-        "sign_up/",
+        "accounts/sign_up/",
         RegisterPageFormView.as_view(),
         name="sign_up",
     ),
     # path(
-    #     "active/<uidb64:uidb64>/<str:token>",
+    #     "accounts/active/<uidb64:uidb64>/<str:token>",
     #     active_user_mail_token,
     #     name="active-user-mail-token",
     # ),
     path(
-        "login/",
+        "accounts/login/",
         AccountLoginView.as_view(),
         name="login",
     ),
     path(
-        "logout/",
+        "accounts/logout/",
         auth_view.LogoutView.as_view(
             template_name="user/sign-out.html",
         ),
         name="logout",
     ),
     path(
-        "password/change/",
+        "accounts/password/change/",
         auth_view.PasswordChangeView.as_view(
             template_name="user/password-change.html",
         ),
         name="password_change",
     ),
     path(
-        "password/change/conferma",
+        "accounts/password/change/conferma",
         auth_view.PasswordChangeDoneView.as_view(
             template_name="user/password-change-done.html",
         ),
         name="password_change_done",
     ),
     path(
-        "password/reset/",
+        "accounts/password/reset/",
         AccountPasswordResetView.as_view(),
         name="password_change_done",
     ),
     path(
-        "password/reset/thanks/",
+        "accounts/password/reset/thanks/",
         AccountPasswordResetDoneView.as_view(),
         name="reset_password",
     ),
     path(
-        "password/reset/confirm/<uidb64>/<token>/",
+        "accounts/password/reset/confirm/<uidb64>/<token>/",
         AccountPasswordResetConfirmView.as_view(),
         name="reset_password_done",
     ),
     path(
-        "password/reset/complete/",
+        "accounts/password/reset/complete/",
         AccountPasswordResetCompleteView.as_view(),
         name="reset_password_confirm",
     ),
 ]
 
 urlpatterns += [
-    path("", include("django.contrib.auth.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
 ]
