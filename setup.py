@@ -2,7 +2,7 @@ import os
 import glob
 import setuptools
 
-__version__ = "0.1.0"
+__version__ = "0.1.2"
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -44,9 +44,9 @@ setuptools.setup(
     ],
     include_package_data=True,
     packages=[
-        "django_kakebo", "django_kakebo.src.django_kakebo", "django_kakebo.src.django_kakebo.migrations",
-        "django_kakebo.src.django_kakebo.templatetags", "django_kakebo.src.django_kakebo.views",
-        "django_kakebo.src.user"
+        "django_kakebo", "django_kakebo.migrations", "django_kakebo.src.django_kakebo",
+        "django_kakebo.src.django_kakebo.migrations", "django_kakebo.src.django_kakebo.templatetags",
+        "django_kakebo.src.django_kakebo.views", "django_kakebo.src.user"
     ],
     data_files=[
         (
