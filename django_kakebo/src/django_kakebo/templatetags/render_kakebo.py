@@ -12,9 +12,7 @@ register = template.Library()
 
 def get_data_byobj(kakebo: dict, color: str, row: int, column: int):
     type_cost = int(list_colors.index(color))
-    kakebo = KakeboWeekTable.objects.get(
-        kakebo=kakebo, type_cost=type_cost
-    ).data_row
+    kakebo = KakeboWeekTable.objects.get(kakebo=kakebo, type_cost=type_cost).data_row
 
     if not any(
             kakebo
@@ -43,7 +41,13 @@ def white_space_table():
 
 @register.filter(is_safe=True)
 @register.simple_tag
-def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str = None, disabled: bool = False):
+def render_table(
+        color: str = None,
+        row: int = 7,
+        name: str = None,
+        kakebo: str = None,
+        disabled: bool = False,
+):
     """
     Render table with a determinate color and row
     """
@@ -51,7 +55,7 @@ def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str 
         color = "orange"
 
     # get kakebo table week from db
-    username, year, week = kakebo.split('-')
+    username, year, week = kakebo.split("-")
     # get user
     user = User.objects.get(username=username)
     date_w = f"{year}-{week}-1"
@@ -62,7 +66,9 @@ def render_table(color: str = None, row: int = 7, name: str = None, kakebo: str 
         year=year,
     )
     obj = KakeboWeek.objects.get(
-        user=user, month=month, week=week,
+        user=user,
+        month=month,
+        week=week,
     )
 
     html = "<tbody>"
@@ -216,9 +222,7 @@ def render_sidebar(kakebo, row: int, color: str, total_row: int):
     """
 
     type_cost = int(list_colors.index(color))
-    obj = KakeboWeekTable.objects.get(
-        kakebo=kakebo, type_cost=type_cost
-    )
+    obj = KakeboWeekTable.objects.get(kakebo=kakebo, type_cost=type_cost)
 
     # init and set value
     if row == total_row:
@@ -228,7 +232,7 @@ def render_sidebar(kakebo, row: int, color: str, total_row: int):
         data = obj.get_list_sort_cost(total_row)
         if data and row < len(data):
             data = data[row]
-            val = (data['desc'], data['value'])
+            val = (data["desc"], data["value"])
         else:
             val = ("", "")
         html += '<p class="p-3">'

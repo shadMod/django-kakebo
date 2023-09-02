@@ -10,8 +10,8 @@ class KakeboMonthAdmin(admin.ModelAdmin):
 
 @admin.register(KakeboWeek)
 class KakeboWeekAdmin(admin.ModelAdmin):
-    search_fields = ['kakebo']
-    autocomplete_fields = ['user']
+    search_fields = ["kakebo"]
+    autocomplete_fields = ["user"]
 
 
 @admin.register(KakeboWeekTable)

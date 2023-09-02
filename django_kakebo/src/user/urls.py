@@ -3,7 +3,6 @@ from django.contrib.auth import views as auth_view
 
 from .views import (
     RegisterPageFormView,
-    # active_user_mail,
     AccountLoginView,
     AccountPasswordResetView,
     AccountPasswordResetDoneView,
@@ -20,9 +19,9 @@ urlpatterns += [
         name="sign_up",
     ),
     # path(
-    #     "active/<str:uidb64>/<str:token>",
-    #     active_user_mail,
-    #     name="active-user-mail",
+    #     "active/<uidb64:uidb64>/<str:token>",
+    #     active_user_mail_token,
+    #     name="active-user-mail-token",
     # ),
     path(
         "login/",

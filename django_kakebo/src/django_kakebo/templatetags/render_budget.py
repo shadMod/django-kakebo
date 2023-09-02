@@ -9,12 +9,12 @@ register = template.Library()
 
 @register.filter(is_safe=True)
 @register.simple_tag
-def render_month_budget(kakebo: str, section: str, nr_row: int = 4, disabled: bool = False):
-    username, month, year = kakebo.split('-')
+def render_month_budget(
+        kakebo: str, section: str, nr_row: int = 4, disabled: bool = False
+):
+    username, month, year = kakebo.split("-")
     user = User.objects.get(username=username)
-    obj = KakeboMonth.objects.get(
-        user=user, month=month, year=year
-    )
+    obj = KakeboMonth.objects.get(user=user, month=month, year=year)
     budget = obj.budget
     disabled = "disabled" if disabled else ""
 
@@ -53,9 +53,9 @@ def render_month_budget(kakebo: str, section: str, nr_row: int = 4, disabled: bo
 
     total_ = [
         (_("total income"), "cyan", obj.display_totals_budget[0]),
-        (_("total steady outflow"), "blue", obj.display_totals_budget[1])
+        (_("total steady outflow"), "blue", obj.display_totals_budget[1]),
     ]
-    total_ = total_[0] if section == 'income' else total_[1]
+    total_ = total_[0] if section == "income" else total_[1]
     html += f"""
         <tr>
             <td></td>

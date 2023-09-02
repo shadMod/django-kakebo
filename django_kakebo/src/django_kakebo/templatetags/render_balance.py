@@ -11,7 +11,7 @@ register = template.Library()
 @register.filter(is_safe=True)
 @register.simple_tag
 def render_total_weeks(kakebo: str, color: str):
-    username, year, month = kakebo.split('-')
+    username, year, month = kakebo.split("-")
     # get User()
     user = User.objects.get(username=username)
     # get KakeboMonth()
@@ -24,7 +24,9 @@ def render_total_weeks(kakebo: str, color: str):
     type_cost = int(list_colors.index(color))
     data = []
     for obj in obj_list:
-        val = KakeboWeekTable.objects.get(kakebo=obj, type_cost=type_cost).display_total_table
+        val = KakeboWeekTable.objects.get(
+            kakebo=obj, type_cost=type_cost
+        ).display_total_table
         data.append("%.2f" % val)
 
     html = f"""
@@ -84,9 +86,11 @@ def render_total_weeks(kakebo: str, color: str):
 
 @register.filter(is_safe=True)
 @register.simple_tag
-def render_cost_relevant(kakebo: str, nr_cost: int, row: int = 5, disabled: bool = False):
+def render_cost_relevant(
+        kakebo: str, nr_cost: int, row: int = 5, disabled: bool = False
+):
     disabled = "disabled" if disabled else ""
-    username, year, month = kakebo.split('-')
+    username, year, month = kakebo.split("-")
     # get User()
     user = User.objects.get(username=username)
     # get KakeboMonth()
@@ -183,7 +187,7 @@ def render_cost_relevant(kakebo: str, nr_cost: int, row: int = 5, disabled: bool
 def render_month_cost(kakebo: str, row: int = 5):
     html = "<tbody>"
     list_row = row + 1
-    username, year, month = kakebo.split('-')
+    username, year, month = kakebo.split("-")
     # get User()
     user = User.objects.get(username=username)
     # get KakeboMonth()

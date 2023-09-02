@@ -76,7 +76,12 @@ class KakeboWeek(models.Model):
 
     @property
     def total_week(self):
-        return sum([obj.display_total_table for obj in KakeboWeekTable.objects.filter(kakebo=self)])
+        return sum(
+            [
+                obj.display_total_table
+                for obj in KakeboWeekTable.objects.filter(kakebo=self)
+            ]
+        )
 
 
 class KakeboWeekTable(models.Model):
@@ -107,13 +112,13 @@ class KakeboWeekTable(models.Model):
         data = []
         for row in self.data_row.values():
             data.extend([v for v in row.values()])
-        sort_ = sorted([x for x in data], key=lambda x: x['value'], reverse=True)
+        sort_ = sorted([x for x in data], key=lambda x: x["value"], reverse=True)
         return sort_
 
     def get_column(self, clm: int) -> list:
-        clm = self.data_row.get(f'{clm}', {})
+        clm = self.data_row.get(f"{clm}", {})
         if clm:
-            return [(x.get('desc', ""), x.get('value', 0)) for x in clm.values()]
+            return [(x.get("desc", ""), x.get("value", 0)) for x in clm.values()]
         return []
 
     def get_cell(self, clm: int, row: int) -> tuple:
@@ -157,7 +162,8 @@ class KakeboEndOfMonthBalance(models.Model):
         (3, "no"),
     ]
     conclusion: int = models.PositiveSmallIntegerField(
-        choices=LIST_TYPE, default=0,
+        choices=LIST_TYPE,
+        default=0,
     )
 
     @property

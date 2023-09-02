@@ -21,9 +21,7 @@ class RegisterForm(forms.Form):
         label=_("Confirm password"),
         widget=forms.PasswordInput(),
     )
-    condition_check = forms.BooleanField(
-        required=False
-    )
+    condition_check = forms.BooleanField(required=False)
 
     def __init__(self, *args, **kwargs):
         super(RegisterForm, self).__init__(*args, **kwargs)

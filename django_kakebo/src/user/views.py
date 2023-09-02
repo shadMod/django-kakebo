@@ -33,8 +33,8 @@ class RegisterPageFormView(FormView):
         email = cd["email"]
         password = cd["password"]
 
-        if getattr(settings, 'GOOGLE_RECAPTCHA_SECRET_KEY', None) is not None:
-            """ Start reCAPTCHA validation """
+        if getattr(settings, "GOOGLE_RECAPTCHA_SECRET_KEY", None) is not None:
+            """Start reCAPTCHA validation"""
             res = request.POST.get("g-recaptcha-response")
             url = "https://www.google.com/recaptcha/api/siteverify"
             values = {
@@ -49,18 +49,14 @@ class RegisterPageFormView(FormView):
                 form.add_error(field=None, error="Verifica Captcha fallita")
                 return self.form_invalid(form)
 
-        User.objects.create_user(
-            username, email, password
+        User.objects.create_user(username, email, password)
+        messages.success(
+            request, "Utente creato con successo, controlla la mail per confermarla"
         )
-        messages.success(request, "Utente creato con successo, controlla la mail per confermarla")
         return self.get_success_url()
 
     def get_success_url(self):
         return HttpResponseRedirect(reverse_lazy("login"))
-
-
-def active_user_mail():
-    pass
 
 
 class AccountLoginView(LoginView):

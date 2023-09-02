@@ -64,8 +64,8 @@ class SelectYearWeekFormView(LoginRequiredMixin, FormView):
         # init obj in self
         self.obj, _ = KakeboMonth.objects.get_or_create(
             user=self.request.user,
-            month=self.kwargs['month'],
-            year=self.kwargs['year'],
+            month=self.kwargs["month"],
+            year=self.kwargs["year"],
         )
 
         obj_reports = KakeboEndOfMonthBalance.objects.filter(month=self.obj)
@@ -81,18 +81,18 @@ class SelectYearWeekFormView(LoginRequiredMixin, FormView):
         if not self.obj_report.conclusion:
             budget = {}
             for i, row in enumerate(form.cleaned_data):
-                budget[f'_income_{i}'] = {}
-                budget[f'_outflow_{i}'] = {}
+                budget[f"_income_{i}"] = {}
+                budget[f"_outflow_{i}"] = {}
                 for key, value in row.items():
-                    if '_income' in key:
+                    if "_income" in key:
                         if isinstance(value, (datetime, date)):
                             value = value.strftime("%Y-%m-%d")
                         value = "" if value is None else value
-                        budget[f'_income_{i}'][key] = value
-                    if '_outflow' in key and value:
+                        budget[f"_income_{i}"][key] = value
+                    if "_outflow" in key and value:
                         if isinstance(value, (datetime, date)):
                             value = value.strftime("%Y-%m-%d")
-                        budget[f'_outflow_{i}'][key] = value
+                        budget[f"_outflow_{i}"][key] = value
             self.obj.budget = budget
 
             cd_0 = form.cleaned_data[0]
@@ -107,7 +107,8 @@ class SelectYearWeekFormView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return HttpResponseRedirect(
             reverse_lazy(
-                "kakebo-calendar", kwargs={
+                "kakebo-calendar",
+                kwargs={
                     "year": self.kwargs["year"],
                     "month": self.kwargs["month"],
                 },
@@ -117,7 +118,7 @@ class SelectYearWeekFormView(LoginRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        month, year = self.kwargs['month'], self.kwargs['year']
+        month, year = self.kwargs["month"], self.kwargs["year"]
 
         context["day_list"] = [
             "Monday",
@@ -128,19 +129,21 @@ class SelectYearWeekFormView(LoginRequiredMixin, FormView):
             "Saturday",
             "Sunday",
         ]
-        context["week_list"] = self.get_week_dict(
-            monthcalendar(year, month)
-        )
+        context["week_list"] = self.get_week_dict(monthcalendar(year, month))
 
         context["month"] = f"{month_name[month]} {year}"
-        context['key_kakebo'] = f'{self.request.user.username}-{self.kwargs["month"]} - {self.kwargs["year"]}'
+        context[
+            "key_kakebo"
+        ] = f'{self.request.user.username}-{self.kwargs["month"]} - {self.kwargs["year"]}'
         context["income"], context["outflow"] = self.obj.display_totals_budget
         context["spare_cost"] = self.obj.spare_cost
         context["target_reach"] = self.obj.target_reach
         context["spare"] = "%.2f" % self.obj.spare
         available_money = self.obj.display_available_money
-        context["available_money"] = "%.2f" % available_money if available_money else None
-        context['disabled'] = "disabled" if self.conclusion else ""
+        context["available_money"] = (
+            "%.2f" % available_money if available_money else None
+        )
+        context["disabled"] = "disabled" if self.conclusion else ""
         return context
 
     def get_week_dict(self, week_list) -> dict:
@@ -153,7 +156,7 @@ class SelectYearWeekFormView(LoginRequiredMixin, FormView):
         week = week_list[0]
         if ("", 0) in week:
             day = 31
-            month = self.kwargs['month'] - 1
+            month = self.kwargs["month"] - 1
             for i in sorted(find_indices(week, ("", 0)), reverse=True):
                 week[i] = ("another-month", day, month)
                 day -= 1
@@ -162,7 +165,7 @@ class SelectYearWeekFormView(LoginRequiredMixin, FormView):
         week = week_list[-1]
         if ("", 0) in week:
             day = 1
-            month = self.kwargs['month'] + 1
+            month = self.kwargs["month"] + 1
             for i in find_indices(week, ("", 0)):
                 week[i] = ("another-month", day, month)
                 day += 1
@@ -177,7 +180,9 @@ class SelectYearWeekFormView(LoginRequiredMixin, FormView):
         nr_week = []
         for week in week_list:
             day = [x for x in week if x][0]
-            nr_week.append(date(self.kwargs['year'], self.kwargs['month'], day).isocalendar().week)
+            nr_week.append(
+                date(self.kwargs["year"], self.kwargs["month"], day).isocalendar().week
+            )
         return nr_week
 
 
@@ -190,8 +195,8 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
             return self.handle_no_permission()
 
         # init year and week in self
-        self.year = kwargs['year']
-        self.week = kwargs['week']
+        self.year = kwargs["year"]
+        self.week = kwargs["week"]
 
         # get month by year and week
         date_w = f"{self.year}-{self.week}-1"
@@ -200,7 +205,7 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
         self.obj_month, _ = KakeboMonth.objects.get_or_create(
             user=self.request.user,
             month=month,
-            year=self.kwargs['year'],
+            year=self.kwargs["year"],
         )
 
         # init obj with relative tables (=> tb_{color}) in self
@@ -213,7 +218,7 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
             table, _ = KakeboWeekTable.objects.get_or_create(
                 kakebo=self.obj, type_cost=i
             )
-            setattr(self, f'tb_{color}', table)
+            setattr(self, f"tb_{color}", table)
 
         # init date from week and year param in self.time_
         self.time_ = self.obj.display_start_week
@@ -240,7 +245,7 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
                         value = cd.get(f"{tag_name}_value", None)
                         if desc or value:
                             data[clm][row] = {"desc": desc, "value": value}
-                obj = getattr(self, f'tb_{color}')
+                obj = getattr(self, f"tb_{color}")
                 obj.data_row = data
                 obj.save()
         return self.get_success_url()
@@ -248,7 +253,8 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return HttpResponseRedirect(
             reverse_lazy(
-                "kakebo-week", kwargs={
+                "kakebo-week",
+                kwargs={
                     "year": self.kwargs["year"],
                     "week": self.kwargs["week"],
                 },
@@ -263,23 +269,25 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
         # TODO: add management in back-office view
         for i, lenrows in enumerate([10, 7, 7, 7]):
             list_tr.append((colors[i], lenrows, list_type[i][1]))
-        context['list_tr'] = list_tr
+        context["list_tr"] = list_tr
 
-        context['cell_'] = self.get_list_day(self.time_)
-        context['row_'] = [i for i in range(7)]
-        context['key_kakebo'] = f'{self.request.user.username}-{self.kwargs["year"]}-{self.kwargs["week"]}'
+        context["cell_"] = self.get_list_day(self.time_)
+        context["row_"] = [i for i in range(7)]
+        context[
+            "key_kakebo"
+        ] = f'{self.request.user.username}-{self.kwargs["year"]}-{self.kwargs["week"]}'
 
         totals_days = []
         for i in range(7):
             totals = []
             for color in colors:
-                obj = getattr(self, f'tb_{color}')
+                obj = getattr(self, f"tb_{color}")
                 totals.append(obj.total_column(i))
-            totals_days.append('%.2f' % (sum(totals)))
+            totals_days.append("%.2f" % (sum(totals)))
 
         context["totals_days"] = totals_days
         context["total_week"] = sum(list(map(float, totals_days)))
-        context['disabled'] = "disabled" if self.conclusion else ""
+        context["disabled"] = "disabled" if self.conclusion else ""
         return context
 
     @staticmethod
@@ -317,13 +325,13 @@ class EndOfMonthBalanceSheetFormView(LoginRequiredMixin, FormView):
         cd = form.cleaned_data
 
         if not self.obj.conclusion:
-            self.obj.electricity = cd['electricity'] if cd['electricity'] else 0
-            self.obj.gas = cd['gas'] if cd['gas'] else 0
-            self.obj.tel_internet = cd['tel_internet'] if cd['tel_internet'] else 0
-            self.obj.water = cd['water'] if cd['water'] else 0
-            self.obj.waste = cd['waste'] if cd['waste'] else 0
-            self.obj.answer_1 = cd['answer_1']
-            self.obj.answer_2 = cd['answer_2']
+            self.obj.electricity = cd["electricity"] if cd["electricity"] else 0
+            self.obj.gas = cd["gas"] if cd["gas"] else 0
+            self.obj.tel_internet = cd["tel_internet"] if cd["tel_internet"] else 0
+            self.obj.water = cd["water"] if cd["water"] else 0
+            self.obj.waste = cd["waste"] if cd["waste"] else 0
+            self.obj.answer_1 = cd["answer_1"]
+            self.obj.answer_2 = cd["answer_2"]
 
             costs = {}
             for j in range(2):
@@ -345,7 +353,7 @@ class EndOfMonthBalanceSheetFormView(LoginRequiredMixin, FormView):
                 self.obj.conclusion = 3
             self.obj.save()
 
-        self.obj.answer_3 = cd['answer_3']
+        self.obj.answer_3 = cd["answer_3"]
         self.obj.save()
 
         return self.get_success_url()
@@ -353,7 +361,8 @@ class EndOfMonthBalanceSheetFormView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return HttpResponseRedirect(
             reverse_lazy(
-                "kakebo-balance", kwargs={
+                "kakebo-balance",
+                kwargs={
                     "year": self.kwargs["year"],
                     "month": self.kwargs["month"],
                 },
@@ -371,15 +380,19 @@ class EndOfMonthBalanceSheetFormView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['list_colors'] = colors
-        context['key_kakebo'] = f'{self.request.user.username}-{self.kwargs["year"]}-{self.kwargs["month"]}'
+        context["list_colors"] = colors
+        context[
+            "key_kakebo"
+        ] = f'{self.request.user.username}-{self.kwargs["year"]}-{self.kwargs["month"]}'
         list_utilities = ["electricity", "gas", "tel_internet", "water", "waste"]
-        context['list_utilities'] = [(x, getattr(self.obj, f"display_{x}")) for x in list_utilities]
-        context['tot_utilities'] = self.obj.display_total_utilities
-        context['len_week'] = len(self.obj_list)
-        context['tot_available'] = self.obj_month.display_available_money
-        context['tot_costs'] = self.obj.display_total_month
-        context['diff_available_costs'] = self.obj.display_diff_available_costs
-        context['obj_conclusion'] = self.obj.get_conclusion_display
-        context['disabled'] = "disabled" if self.obj.conclusion else ""
+        context["list_utilities"] = [
+            (x, getattr(self.obj, f"display_{x}")) for x in list_utilities
+        ]
+        context["tot_utilities"] = self.obj.display_total_utilities
+        context["len_week"] = len(self.obj_list)
+        context["tot_available"] = self.obj_month.display_available_money
+        context["tot_costs"] = self.obj.display_total_month
+        context["diff_available_costs"] = self.obj.display_diff_available_costs
+        context["obj_conclusion"] = self.obj.get_conclusion_display
+        context["disabled"] = "disabled" if self.obj.conclusion else ""
         return context
