@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -11,11 +12,12 @@ register = template.Library()
 @register.filter(is_safe=True)
 @register.simple_tag
 def render_total_weeks(kakebo: str, color: str):
-    username, year, month = kakebo.split("-")
+    user_val, month, year = kakebo.split("-")
     # get User()
-    user = User.objects.get(username=username)
+    kw = {getattr(settings, "USER_FIELD_KAKEBO", "username"): user_val}
+    user = User.objects.get(**kw)
     # get KakeboMonth()
-    obj_month = KakeboMonth.objects.get(
+    obj_month, _c = KakeboMonth.objects.get_or_create(
         user=user,
         month=month,
         year=year,
@@ -90,9 +92,10 @@ def render_cost_relevant(
         kakebo: str, nr_cost: int, row: int = 5, disabled: bool = False
 ):
     disabled = "disabled" if disabled else ""
-    username, year, month = kakebo.split("-")
+    user_val, month, year = kakebo.split("-")
     # get User()
-    user = User.objects.get(username=username)
+    kw = {getattr(settings, "USER_FIELD_KAKEBO", "username"): user_val}
+    user = User.objects.get(**kw)
     # get KakeboMonth()
     obj_month = KakeboMonth.objects.get(
         user=user,
@@ -187,9 +190,10 @@ def render_cost_relevant(
 def render_month_cost(kakebo: str, row: int = 5):
     html = "<tbody>"
     list_row = row + 1
-    username, year, month = kakebo.split("-")
+    user_val, month, year = kakebo.split("-")
     # get User()
-    user = User.objects.get(username=username)
+    kw = {getattr(settings, "USER_FIELD_KAKEBO", "username"): user_val}
+    user = User.objects.get(**kw)
     # get KakeboMonth()
     obj_month = KakeboMonth.objects.get(
         user=user,
@@ -209,7 +213,9 @@ def render_month_cost(kakebo: str, row: int = 5):
             html += f"""
                 <td class="w-33 align-top text-end p-3" rowspan="{list_row + 1}">
                     <h5 class="text-lightseagreen">
-                        spese settimali
+            """
+            html += _("weekly expenses")
+            html += """
                     </h5>
                 </td>
             """

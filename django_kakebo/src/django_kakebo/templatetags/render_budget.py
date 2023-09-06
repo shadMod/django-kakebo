@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -13,7 +14,8 @@ def render_month_budget(
         kakebo: str, section: str, nr_row: int = 4, disabled: bool = False
 ):
     username, month, year = kakebo.split("-")
-    user = User.objects.get(username=username)
+    kw = {getattr(settings, "USER_FIELD_KAKEBO", "username"): username}
+    user = User.objects.get(**kw)
     obj = KakeboMonth.objects.get(user=user, month=month, year=year)
     budget = obj.budget
     disabled = "disabled" if disabled else ""
