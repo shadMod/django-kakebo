@@ -1,3 +1,4 @@
+{% load i18n %}
 <footer class="site-footer section-padding">
 	<div class="container">
 		<div class="row">
@@ -13,38 +14,37 @@
 
 			<div class="col-lg-3 col-md-4 col-6">
 				<h6 class="site-footer-title mb-3">
-					Sections
-
+					{% trans 'Sections' %}
 				</h6>
 
 				<ul class="site-footer-links">
 					<li class="site-footer-link-item">
 						<a href="#" class="site-footer-link">
-							Home
+							{% trans 'Home' %}
 						</a>
 					</li>
 
 					<li class="site-footer-link-item">
 						<a class="site-footer-link" href="#section_1">
-							Scopri il Kakebo
+							{% trans 'Learn about Kakebo' %}
 						</a>
 					</li>
 
 					<li class="site-footer-link-item">
 						<a class="site-footer-link" href="#section_2">
-							5 motivi per usarlo
+							{% trans '5 reasons to use it' %}
 						</a>
 					</li>
 
 					<li class="site-footer-link-item">
 						<a class="site-footer-link" href="#section_3">
-							FAQs
+							{% trans 'FAQs' %}
 						</a>
 					</li>
 
 					<li class="site-footer-link-item">
 						<a class="site-footer-link" href="#section_4">
-							Contact
+							{% trans 'Contact Us' %}
 						</a>
 					</li>
 				</ul>
@@ -52,7 +52,7 @@
 
 			<div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
 				<h6 class="site-footer-title mb-3">
-					Contacts
+					{% trans 'Contacts' %}
 				</h6>
 
 				<p class="text-white d-flex mb-1">
@@ -72,13 +72,13 @@
 				<div class="dropdown">
 					<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
 							aria-expanded="false">
-						English
+						{% trans 'English' %}
 					</button>
 
 					<ul class="dropdown-menu">
 						<li>
 							<button class="dropdown-item" type="button">
-								Italian
+								{% trans 'Italian' %}
 							</button>
 						</li>
 					</ul>

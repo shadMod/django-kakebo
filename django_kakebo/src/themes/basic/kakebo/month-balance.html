@@ -19,25 +19,25 @@
 				<div class="col-12 my-5 text-center">
 					{% if obj_conclusion == 'yes' %}
 					<h4>
-						Complimenti! Concediti un piccolo premio, ma attenzione a non vanificare gli sforzi fatti.
+						{% trans 'Congratulations! Treat yourself to a small reward, but be careful not to undo your efforts.' %}
 						<br>
-						Scegli una cosa che possa darti realmente gratificazione spendendo poco.
+						{% trans 'Choose something that can give you real gratification while spending little.' %}
 						<br>
-						Per qualche spunto puoi vedere tra nel nostro FAQs.
+						{% trans 'See our FAQs for some ideas' %}
 					</h4>
 					{% elif obj_conclusion == 'almost' or obj_conclusion == 'no' %}
 					<h4>
-						Peccato <i class="bi bi-emoji-frown h1 text-primary"></i>
+						{% trans 'Damn...' %} <i class="bi bi-emoji-frown h1 text-primary"></i>
 						<br>
-						Che cosa non ha funzionato?
+						{% trans "What didn't work?" %}
 						<br>
-						Che cosa puoi fare per migliorare il mese proprio?
+						{% trans 'What could you do to improve your month?' %}
 					</h4>
 					<div class="w-25 mb-3 pt-3 m-auto">
 						{{ form.answer_3 }}
 					</div>
 					<button type="submit" class="btn btn-primary w-25">
-						Invia risposta
+						{% trans 'Send reply' %}
 					</button>
 					{% endif %}
 				</div>
@@ -107,8 +107,10 @@
 								</table>
 
 								<p class="my-4 px-3">
-									Inserisci qui sotto le voci che ritieni più sensibili (eg bar, carburante, etc),
-									se ci sono tra le spese che hai inserito nelle categorie principali
+									{% blocktrans %}
+									Enter below the items you think are most sensitive (eg bar, fuel, etc.),
+									if there are among the expenses you have entered the main categories
+									{% endblocktrans %}
 								</p>
 
 								<div class="container-fluid">
@@ -135,14 +137,16 @@
 
 								<div class="mb-3">
 									<label for="form-answer_1" class="form-label">
-										Confrontando i totali di tutte le tabelle: quali sono le voci di spesa che hanno
-										inciso di più questo mese? Te lo aspettavi?
+										{% blocktrans %}
+										Comparing the totals of all tables: which expenditure items affected
+										the most this month? Did you expect this?
+										{% endblocktrans %}
 									</label>
 									{{ form.answer_1 }}
 								</div>
 								<div class="mb-3">
 									<label for="form-answer_2" class="form-label">
-										Ci sono uscite che potresti tagliare?
+										{% trans 'Are there any exits that can be cut?' %}
 									</label>
 									{{ form.answer_2 }}
 								</div>
@@ -162,7 +166,7 @@
 										<div class="col-12 col-lg-6">
 											<p class="text-end">
 												<i class="bi bi-wallet h3 pe-3 text-lightseagreen"></i>
-												Quanto denaro avevi a disposizione?
+												{% trans 'How much money did you have available?' %}
 											</p>
 										</div>
 										<div class="col-12 col-lg-6">
@@ -173,7 +177,7 @@
 										<div class="col-12 col-lg-6">
 											<p class="text-end">
 												<i class="bi bi-cash-coin h3 pe-3 text-lightseagreen"></i>
-												Quanto hai speso?
+												{% trans 'How much did you spend?' %}
 											</p>
 										</div>
 										<div class="col-12 col-lg-6">
@@ -184,7 +188,7 @@
 										<div class="col-12 col-lg-6">
 											<p class="text-end">
 												<i class="bi bi-piggy-bank h3 pe-3 text-lightseagreen"></i>
-												Quanto hai risparmiato?
+												{% trans 'How much did you save?' %}
 											</p>
 										</div>
 										<div class="col-12 col-lg-6">
@@ -194,7 +198,7 @@
 										</div>
 										<div class="col-12 my-5">
 											<button type="submit" class="btn btn-primary w-100">
-												Salva modifiche
+												{% trans 'Save changes' %}
 											</button>
 										</div>
 									</div>
