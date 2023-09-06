@@ -9,7 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from ..models import KakeboMonth, KakeboWeek, KakeboWeekTable, KakeboEndOfMonthBalance
 from ..forms import SelectYearWeekFormSet, KakeboWeekForm, EndOfMonthBalanceSheetForm
 from ..constants import colors
-from ..utils import find_indices
+from ..utils import find_indices, KeyKakebo
 
 
 class Index(TemplateView):
@@ -47,7 +47,7 @@ class Index(TemplateView):
         return context
 
 
-class SelectYearWeekFormView(LoginRequiredMixin, FormView):
+class SelectYearWeekFormView(LoginRequiredMixin, FormView, KeyKakebo):
     form_class = SelectYearWeekFormSet
     template_name = "basic/kakebo/calendar.html"
 
@@ -78,7 +78,7 @@ class SelectYearWeekFormView(LoginRequiredMixin, FormView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        if not self.obj_report.conclusion:
+        if not self.obj_report or not self.obj_report.conclusion:
             budget = {}
             for i, row in enumerate(form.cleaned_data):
                 budget[f"_income_{i}"] = {}
@@ -132,9 +132,7 @@ class SelectYearWeekFormView(LoginRequiredMixin, FormView):
         context["week_list"] = self.get_week_dict(monthcalendar(year, month))
 
         context["month"] = f"{month_name[month]} {year}"
-        context[
-            "key_kakebo"
-        ] = f'{self.request.user.username}-{self.kwargs["month"]} - {self.kwargs["year"]}'
+        context["key_kakebo"] = self.get_key_kakebo
         context["income"], context["outflow"] = self.obj.display_totals_budget
         context["spare_cost"] = self.obj.spare_cost
         context["target_reach"] = self.obj.target_reach
@@ -186,9 +184,10 @@ class SelectYearWeekFormView(LoginRequiredMixin, FormView):
         return nr_week
 
 
-class KakeboWeekFormView(LoginRequiredMixin, FormView):
+class KakeboWeekFormView(LoginRequiredMixin, FormView, KeyKakebo):
     form_class = KakeboWeekForm
     template_name = "basic/kakebo/week.html"
+    field_list = ["username", "year", "week"]
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -273,9 +272,7 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
 
         context["cell_"] = self.get_list_day(self.time_)
         context["row_"] = [i for i in range(7)]
-        context[
-            "key_kakebo"
-        ] = f'{self.request.user.username}-{self.kwargs["year"]}-{self.kwargs["week"]}'
+        context["key_kakebo"] = self.get_key_kakebo
 
         totals_days = []
         for i in range(7):
@@ -300,7 +297,7 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView):
         return list_days
 
 
-class EndOfMonthBalanceSheetFormView(LoginRequiredMixin, FormView):
+class EndOfMonthBalanceSheetFormView(LoginRequiredMixin, FormView, KeyKakebo):
     form_class = EndOfMonthBalanceSheetForm
     template_name = "basic/kakebo/month-balance.html"
 
@@ -381,9 +378,7 @@ class EndOfMonthBalanceSheetFormView(LoginRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["list_colors"] = colors
-        context[
-            "key_kakebo"
-        ] = f'{self.request.user.username}-{self.kwargs["year"]}-{self.kwargs["month"]}'
+        context["key_kakebo"] = self.get_key_kakebo
         list_utilities = ["electricity", "gas", "tel_internet", "water", "waste"]
         context["list_utilities"] = [
             (x, getattr(self.obj, f"display_{x}")) for x in list_utilities
