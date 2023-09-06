@@ -27,7 +27,7 @@ def render_month_budget(
         if value:
             val_date = value.get(f"date_{section}")
             val_descr = value.get(f"descr_{section}")
-            val_value = "%.2f" % value.get(f"value_{section}")
+            val_value = "%.2f" % value.get(f"value_{section}") if value.get(f"value_{section}") else 0
 
         html += f"""
         <tr>
