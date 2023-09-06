@@ -36,7 +36,7 @@ class KakeboMonth(models.Model):
         income, outflow = self.display_totals_budget
         if self.spare:
             return float(income) - float(outflow) - self.spare
-        return None
+        return 0
 
     @property
     def get_totals_budget(self) -> (float, float):
