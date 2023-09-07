@@ -3,7 +3,7 @@ from datetime import datetime
 from django import template
 from django.conf import settings
 from django.utils.safestring import mark_safe
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from ..constants import colors as list_colors
 from ..models import KakeboMonth, KakeboWeek, KakeboWeekTable
@@ -59,7 +59,7 @@ def render_table(
     username, year, week = kakebo.split("-")
     # get user
     kw = {getattr(settings, "USER_FIELD_KAKEBO", "username"): username}
-    user = User.objects.get(**kw)
+    user = get_user_model().objects.get(**kw)
     date_w = f"{year}-{week}-1"
     # get KakeboMonth()
     month = KakeboMonth.objects.get(

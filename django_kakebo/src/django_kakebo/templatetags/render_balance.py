@@ -1,6 +1,6 @@
 from django import template
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from ..constants import colors as list_colors, name_type_cost
@@ -15,7 +15,7 @@ def render_total_weeks(kakebo: str, color: str):
     user_val, month, year = kakebo.split("-")
     # get User()
     kw = {getattr(settings, "USER_FIELD_KAKEBO", "username"): user_val}
-    user = User.objects.get(**kw)
+    user = get_user_model().objects.get(**kw)
     # get KakeboMonth()
     obj_month, _c = KakeboMonth.objects.get_or_create(
         user=user,
@@ -95,7 +95,7 @@ def render_cost_relevant(
     user_val, month, year = kakebo.split("-")
     # get User()
     kw = {getattr(settings, "USER_FIELD_KAKEBO", "username"): user_val}
-    user = User.objects.get(**kw)
+    user = get_user_model().objects.get(**kw)
     # get KakeboMonth()
     obj_month = KakeboMonth.objects.get(
         user=user,
@@ -193,7 +193,7 @@ def render_month_cost(kakebo: str, row: int = 5):
     user_val, month, year = kakebo.split("-")
     # get User()
     kw = {getattr(settings, "USER_FIELD_KAKEBO", "username"): user_val}
-    user = User.objects.get(**kw)
+    user = get_user_model().objects.get(**kw)
     # get KakeboMonth()
     obj_month = KakeboMonth.objects.get(
         user=user,
