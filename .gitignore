@@ -162,5 +162,11 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 
+# ignore settings project and djnago manage
 django_kakebo/src/project
 manage.py
+
+# ignore docu
+make.bat
+Makefile
+docs/source/conf.py
