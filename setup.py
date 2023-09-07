@@ -29,6 +29,8 @@ setuptools.setup(
     url="https://github.com/shadMod/django-kakebo/",
     download_url=f"https://github.com/shadMod/django-kakebo/archive/refs/tags/{__version__}.tar.gz",
     project_urls={
+        'Documentation': 'https://docs.shadmod.it/django_kakebo/index',
+        'GitHub': 'https://github.com/shadMod/django-kakebo/',
         "Bug Tracker": "https://github.com/shadMod/django-kakebo/issues/",
     },
     classifiers=[
