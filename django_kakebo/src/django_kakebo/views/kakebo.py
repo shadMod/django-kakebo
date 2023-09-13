@@ -19,27 +19,27 @@ class Index(TemplateView):
         context = super().get_context_data(**kwargs)
         context["five_reason"] = [
             {
-                "name": "ORDINE",
+                "name": "ORDER",
                 "description": "Lorem ipsium",
                 "favicon": '<i class="bi bi-list-ul"></i>',
             },
             {
-                "name": "CONTROLLO",
+                "name": "CONTROL",
                 "description": "Lorem ipsium",
                 "favicon": '<i class="bi bi-controller"></i>',
             },
             {
-                "name": "RISPARMIO",
+                "name": "SAVINGS",
                 "description": "Lorem ipsium",
                 "favicon": '<i class="bi bi-piggy-bank"></i>',
             },
             {
-                "name": "AUTODISCIPLINA",
+                "name": "SELF-DISCIPLINE",
                 "description": "Lorem ipsium",
                 "favicon": '<i class="bi bi-cup-hot"></i>',
             },
             {
-                "name": "SERENITA'",
+                "name": "SERENITY",
                 "description": "Lorem ipsium",
                 "favicon": '<i class="bi bi-emoji-laughing"></i>',
             },

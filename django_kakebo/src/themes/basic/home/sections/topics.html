@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load static %}
 <section class="explore-section section-padding" id="section_1">
 
@@ -5,7 +6,7 @@
 
 		<div class="col-12 text-center">
 			<h2 class="mb-4">
-				Scopri il Kakebo
+				{% trans 'Learn about Kakebo' %}
 			</h2>
 		</div>
 
@@ -18,7 +19,7 @@
 					<button class="nav-link active" id="first-step-tab" data-bs-toggle="tab"
 							data-bs-target="#first-step-tab-pane" type="button" role="tab"
 							aria-controls="first-step-tab-pane" aria-selected="true">
-						I primi passaggi
+						{% trans 'First steps' %}
 					</button>
 				</li>
 
@@ -26,7 +27,7 @@
 					<button class="nav-link" id="type-cost-tab" data-bs-toggle="tab"
 							data-bs-target="#type-cost-tab-pane" type="button" role="tab"
 							aria-controls="type-cost-tab-pane" aria-selected="false">
-						Le spese
+						{% trans 'Types of costs' %}
 					</button>
 				</li>
 
@@ -49,10 +50,10 @@
 										<div class="d-flex">
 											<div>
 												<h5 class="mb-2">
-													Budget mensile
+													{% trans 'Monthly budget' %}
 												</h5>
 												<p class="mb-0">
-													Stabilisci il tuo budget mensile
+													{% trans 'Set your monthly budget' %}
 													<br><br><br><br>
 												</p>
 											</div>
@@ -69,11 +70,13 @@
 										<div class="d-flex">
 											<div>
 												<h5 class="mb-2">
-													Spese settimanali
+													{% trans 'Weekly expenses' %}
 												</h5>
 												<p class="mb-0">
-													Ogni giorno aggiorna tutte le tue spese o almeno due giorni a
-													settimana (la sera, prima di andare a letto)
+													{% blocktrans %}
+													Every day update all your expenses or at least two days a week
+													(in the evening, before going to bed)
+													{% endblocktrans %}
 												</p>
 											</div>
 										</div>
@@ -89,10 +92,10 @@
 										<div class="d-flex">
 											<div>
 												<h5 class="mb-2">
-													Bilancio a fine mese
+													{% trans 'Budget at the end of the month' %}
 												</h5>
 												<p class="mb-0">
-													A fine mese scrivi il tuo bilancio periodico
+													{% trans 'At the end of the month write your periodic budget' %}
 													<br><br><br>
 												</p>
 											</div>
@@ -114,7 +117,7 @@
 										<div class="d-flex">
 											<div>
 												<h5 class="mb-2">
-													Spese di prima necessità
+													{% trans 'Basic necessities' %}
 												</h5>
 											</div>
 										</div>
@@ -129,7 +132,7 @@
 										<div class="d-flex">
 											<div>
 												<h5 class="mb-2">
-													Optional
+													{% trans 'Optional' %}
 												</h5>
 											</div>
 										</div>
@@ -144,7 +147,7 @@
 										<div class="d-flex">
 											<div>
 												<h5 class="mb-2">
-													Cultura e tempo libero
+													{% trans 'Culture and leisure' %}
 												</h5>
 											</div>
 										</div>
@@ -159,7 +162,7 @@
 										<div class="d-flex">
 											<div>
 												<h5 class="mb-2">
-													Extra e imprevisti
+													{% trans 'Extras and unexpected' %}
 												</h5>
 											</div>
 										</div>
