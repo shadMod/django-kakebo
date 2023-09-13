@@ -199,11 +199,11 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView, KeyKakebo):
 
         # get month by year and week
         date_w = f"{self.year}-{self.week}-1"
-        month = datetime.strptime(date_w, "%Y-%W-%w").month
+        self.month = datetime.strptime(date_w, "%Y-%W-%w").month
         # get KakeboMonth()
         self.obj_month, _ = KakeboMonth.objects.get_or_create(
             user=self.request.user,
-            month=month,
+            month=self.month,
             year=self.kwargs["year"],
         )
 
@@ -269,6 +269,10 @@ class KakeboWeekFormView(LoginRequiredMixin, FormView, KeyKakebo):
         for i, lenrows in enumerate([10, 7, 7, 7]):
             list_tr.append((colors[i], lenrows, list_type[i][1]))
         context["list_tr"] = list_tr
+
+        context["week_previous"] = self.week - 1
+        context["week_next"] = self.week + 1
+        context["month"] = self.month
 
         context["cell_"] = self.get_list_day(self.time_)
         context["row_"] = [i for i in range(7)]

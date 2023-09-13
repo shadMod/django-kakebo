@@ -12,6 +12,30 @@
 <section class="section-padding">
 	<div class="container-fluid">
 		<div class="row">
+			<div class="col-11 m-auto my-4">
+				<div class="row">
+					<div class="col-6 m-auto nav-links">
+						<a href="{% url 'kakebo-calendar' view.kwargs.year month %}">
+							<i class="bi bi-chevron-double-left me-2"></i>
+							Go to calendar
+						</a>
+						<a href="{% url 'kakebo-week' view.kwargs.year week_previous %}" class="ms-5">
+							<i class="bi bi-chevron-left me-2"></i>
+							Previous week
+						</a>
+					</div>
+					<div class="col-6 m-auto text-end nav-links">
+						<a href="{% url 'kakebo-week' view.kwargs.year week_next %}" class="me-5">
+							Next week
+							<i class="bi bi-chevron-right ms-2"></i>
+						</a>
+						<a href="{% url 'kakebo-balance' view.kwargs.year month %}">
+							Go to report
+							<i class="bi bi-chevron-double-right ms-2"></i>
+						</a>
+					</div>
+				</div>
+			</div>
 			<div class="col-11 m-auto">
 				<form method="POST">{% csrf_token %}
 
