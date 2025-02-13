@@ -1,9 +1,4 @@
-import requests
-
 from django.conf import settings
-from django.http import HttpResponseRedirect
-from django.urls import reverse_lazy
-from django.views.generic import FormView
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.views import (
@@ -12,57 +7,69 @@ from django.contrib.auth.views import (
     PasswordResetDoneView,
     PasswordResetConfirmView,
 )
+from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import FormView
 
-from .forms import RegisterForm, AuthForm
+from user.forms import RegisterForm, AuthForm
+from user.utils import validate_recaptcha
 
 
-class RegisterPageFormView(FormView):
+class RegisterFormView(FormView):
+    """Register form view."""
+
     form_class = RegisterForm
     template_name = "user/sign-up.html"
 
-    def dispatch(self, *args, **kwargs):
+    def dispatch(self, *args, **kwargs) -> HttpResponse:
+        """Dispatch method to register form.
+
+        Returns:
+            HttpResponse: HTTP response.
+        """
         if self.request.user.is_authenticated:
             return self.get_success_url()
         return super().dispatch(*args, **kwargs)
 
-    def form_valid(self, form):
-        request = self.request
-        cd = form.cleaned_data
+    def form_valid(self, form: RegisterForm) -> HttpResponseRedirect:
+        """Validate form, check recaptcha if active and create a new User if not exists.
 
+        Args:
+            form (RegisterForm): Register form.
+
+        Returns:
+            HttpResponseRedirect: HTTP response redirect.
+        """
+        cd = form.cleaned_data
         username = cd["username"]
         email = cd["email"]
         password = cd["password"]
 
         if getattr(settings, "GOOGLE_RECAPTCHA_SECRET_KEY", None) is not None:
-            """Start reCAPTCHA validation"""
-            res = request.POST.get("g-recaptcha-response")
-            url = "https://www.google.com/recaptcha/api/siteverify"
-            values = {
-                "secret": settings.GOOGLE_RECAPTCHA_SECRET_KEY,
-                "response": res,
-            }
-            response = requests.post(url=url, data=values)
-            result = response.json()
-            """ End reCAPTCHA validation """
-
+            result = validate_recaptcha(self.request.POST.get("g-recaptcha-response"))
             if not result.get("success"):
-                form.add_error(field=None, error="Verifica Captcha fallita")
+                form.add_error(field=None, error=_("Captcha verification failed."))
                 return self.form_invalid(form)
 
         User.objects.create_user(username, email, password)
         messages.success(
-            request, "Utente creato con successo, controlla la mail per confermarla"
+            self.request,
+            _("User created successfully, check email to confirm."),
         )
         return self.get_success_url()
 
-    def get_success_url(self):
+    def get_success_url(self) -> HttpResponseRedirect:
+        """Get login url.
+
+        Returns:
+            HttpResponseRedirect: HTTP response redirect.
+        """
         return HttpResponseRedirect(reverse_lazy("login"))
 
 
 class AccountLoginView(LoginView):
-    """
-    Display the custom login form and handle the login action.
-    """
+    """Display the custom login form and handle the login action."""
 
     form_class = AuthForm
     template_name = "user/sign-in.html"
@@ -70,16 +77,16 @@ class AccountLoginView(LoginView):
 
 
 class AccountPasswordResetView(PasswordResetView):
-    pass
+    """Account password reset view."""
 
 
 class AccountPasswordResetDoneView(PasswordResetDoneView):
-    pass
+    """Account password reset done view."""
 
 
 class AccountPasswordResetConfirmView(PasswordResetConfirmView):
-    pass
+    """Account password reset confirm view."""
 
 
 class AccountPasswordResetCompleteView(PasswordResetDoneView):
-    pass
+    """Account password reset complete view."""

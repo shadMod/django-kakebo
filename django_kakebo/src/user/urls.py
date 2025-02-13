@@ -1,8 +1,8 @@
-from django.urls import path, include
 from django.contrib.auth import views as auth_view
+from django.urls import path, include
 
-from .views import (
-    RegisterPageFormView,
+from user.views import (
+    RegisterFormView,
     AccountLoginView,
     AccountPasswordResetView,
     AccountPasswordResetDoneView,
@@ -10,24 +10,14 @@ from .views import (
     AccountPasswordResetCompleteView,
 )
 
-urlpatterns = []
-
-urlpatterns += [
-    path(
-        "accounts/sign_up/",
-        RegisterPageFormView.as_view(),
-        name="sign_up",
-    ),
+urlpatterns = [
+    path("accounts/sign-up/", RegisterFormView.as_view(), name="sign_up"),
     # path(
     #     "accounts/active/<uidb64:uidb64>/<str:token>",
     #     active_user_mail_token,
     #     name="active-user-mail-token",
     # ),
-    path(
-        "accounts/login/",
-        AccountLoginView.as_view(),
-        name="login",
-    ),
+    path("accounts/login/", AccountLoginView.as_view(), name="login"),
     path(
         "accounts/logout/",
         auth_view.LogoutView.as_view(
@@ -69,8 +59,5 @@ urlpatterns += [
         AccountPasswordResetCompleteView.as_view(),
         name="reset_password_confirm",
     ),
-]
-
-urlpatterns += [
     path("accounts/", include("django.contrib.auth.urls")),
 ]
