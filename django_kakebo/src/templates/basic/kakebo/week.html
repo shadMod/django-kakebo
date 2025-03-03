@@ -19,13 +19,13 @@
 							<i class="bi bi-chevron-double-left me-2"></i>
 							Go to calendar
 						</a>
-						<a href="{% url 'kakebo-week' view.kwargs.year week_previous %}" class="ms-5">
+						<a href="{% url 'kakebo-week' week_previous.year week_previous.week %}" class="ms-5">
 							<i class="bi bi-chevron-left me-2"></i>
 							Previous week
 						</a>
 					</div>
 					<div class="col-6 m-auto text-end nav-links">
-						<a href="{% url 'kakebo-week' view.kwargs.year week_next %}" class="me-5">
+						<a href="{% url 'kakebo-week' week_next.year week_next.week %}" class="me-5">
 							Next week
 							<i class="bi bi-chevron-right ms-2"></i>
 						</a>
@@ -55,11 +55,11 @@
 						</thead>
 
 						{% for value in list_tr %}
-						{% render_table value.0 value.1 value.2 key_kakebo disabled %}
+						{% render_table_in_week key_kakebo value.0 value.1 disabled %}
 						{% white_space_table %}
 						{% endfor %}
 
-						{% render_table_total totals_days total_week %}
+						{% render_table_total totals_days %}
 
 					</table>
 

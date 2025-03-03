@@ -19,7 +19,8 @@
 				<div class="col-12 my-5 text-center">
 					{% if obj_conclusion == 'yes' %}
 					<h4>
-						{% trans 'Congratulations! Treat yourself to a small reward, but be careful not to undo your efforts.' %}
+						{% trans 'Congratulations! Treat yourself to a small reward, but be careful not to undo your
+						efforts.' %}
 						<br>
 						{% trans 'Choose something that can give you real gratification while spending little.' %}
 						<br>
@@ -225,13 +226,13 @@
 							</div>
 							<div class="row px-3">
 								<div class="col-4 text-center">
-									{% render_answer_smile 0 %}
+									{% render_answer_smile 'yes' %}
 								</div>
 								<div class="col-4 text-center">
-									{% render_answer_smile 1 %}
+									{% render_answer_smile 'almost' %}
 								</div>
 								<div class="col-4 text-center">
-									{% render_answer_smile 2 %}
+									{% render_answer_smile 'no' %}
 								</div>
 							</div>
 
