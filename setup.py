@@ -21,7 +21,7 @@ def get_install_requires() -> list:
 setuptools.setup(
     name="django_kakebo",
     version=__version__,
-    author="shadMod",
+    author="shadmod",
     author_email="support@shadmod.it",
     description="A simple site made with django and exploiting the kakebo method",
     long_description=long_description,
