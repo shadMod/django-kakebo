@@ -1,33 +1,69 @@
-from datetime import datetime
-
 from django import template
-from django.conf import settings
 from django.utils.safestring import mark_safe
-from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from ..constants import colors as list_colors
-from ..models import KakeboMonth, KakeboWeek, KakeboWeekTable
+
+from ..constants import NUMBER_OF_DAYS_IN_WEEK
+from ..models import KakeboWeek, KakeboWeekTable
+from ..models.kakebo_week_table import KakeboCostColors
+from ..utils import get_data_row_from_kakebo_week, get_user_from_user_kakebo_composed
 
 register = template.Library()
 
 
-def get_data_byobj(kakebo: dict, color: str, row: int, column: int):
-    type_cost = int(list_colors.index(color))
-    kakebo = KakeboWeekTable.objects.get(kakebo=kakebo, type_cost=type_cost).data_row
+def render_sidebar_in_week_table(
+    kakebo: KakeboWeek, row: int, color: str, total_row: int
+) -> str:
+    """Render sidebar in week table.
 
-    if not any(
-            kakebo
-            and kakebo.get(f"{column}", "")
-            and kakebo.get(f"{column}", "").get(f"{row}", "")
-    ):
-        return None
+    Args:
+        kakebo (KakeboWeek): KakeboWeek instance.
+        row (int): Row number.
+        color (str): Color string.
+        total_row (int): Total row number.
 
-    return kakebo[f"{column}"][f"{row}"]
+    Returns:
+        str: Render sidebar in week table.
+    """
+    html = """
+        <td class="m-3" width="7.4%">
+    """
+    type_cost_index = int(KakeboCostColors.colors_costs.index(color))
+    kakebo_week_table = KakeboWeekTable.objects.get(
+        kakebo=kakebo, type_cost=type_cost_index
+    )
+
+    if row == total_row:
+        text_desc, value = _("total"), kakebo_week_table.display_total_table
+        html += f'<p class="mx-3 p-1 bg-{color} text-white">'
+    else:
+        data = kakebo_week_table.get_list_sort_cost(total_row)
+        text_desc, value = (
+            (data[row]["desc"], data[row]["value"])
+            if data and row < len(data)
+            else ("", "")
+        )
+        html += '<p class="p-3">'
+
+    html += f"""
+                {text_desc}
+            </p>
+        </td>
+        <td class="p-3" width="5%">
+            <p class="bb-dashed-{color} mb-2 text-end">
+                € {value}
+            </p>
+        </td>
+    """
+    return html
 
 
 @register.simple_tag
-def white_space_table():
-    # a simple body to render a white space
+def white_space_table() -> str:
+    """A simple body to render a white space.
+
+    Returns:
+        str: Return html to render a white space.
+    """
     html = """
     <tbody>
         <tr>
@@ -42,68 +78,63 @@ def white_space_table():
 
 @register.filter(is_safe=True)
 @register.simple_tag
-def render_table(
-        color: str = None,
-        row: int = 7,
-        name: str = None,
-        kakebo: str = None,
-        disabled: bool = False,
-):
-    """
-    Render table with a determinate color and row
-    """
-    if color is None:
-        color = "orange"
+def render_table_in_week(
+    user_kakebo_composed: str,
+    type_cost: str,
+    rows: int = 7,
+    disabled: bool = False,
+) -> str:
+    """Render table week.
 
-    # get kakebo table week from db
-    username, year, week = kakebo.split("-")
-    # get user
-    kw = {getattr(settings, "USER_FIELD_KAKEBO", "username"): username}
-    user = get_user_model().objects.get(**kw)
-    date_w = f"{year}-{week}-1"
-    # get KakeboMonth()
-    month = KakeboMonth.objects.get(
-        user=user,
-        month=datetime.strptime(date_w, "%Y-%W-%w").month,
-        year=year,
+    Args:
+        user_kakebo_composed (str): Value composed of user_val, year, week in one word
+            (e.g. 'username-year-week').
+        type_cost (str): Cost typology from KakeboCostColors.
+        rows (int, optional): Number of rows. Defaults to 7.
+        disabled (bool, optional): If True, disable modal input. Defaults to False.
+
+    Returns:
+        str: Return the render table week.
+    """
+    cost_name, color = getattr(KakeboCostColors, type_cost)
+    user, kakebo_month = get_user_from_user_kakebo_composed(
+        user_kakebo_composed, week_composed=True
     )
-    obj = KakeboWeek.objects.get(
-        user=user,
-        month=month,
-        week=week,
+    kakebo_week = KakeboWeek.objects.get(
+        user=user, month=kakebo_month, week=int(user_kakebo_composed.split("-")[2]) - 1
     )
 
     html = "<tbody>"
-    for i in range(row):
+    for row in range(rows):
         html += "<tr>"
-        if i == 0:
+        if row == 0:
             html += f"""
-            <td class="align-top text-end p-3" rowspan="{row}">
+            <td class="align-top text-end p-3" rowspan="{rows}">
                 <h5 class="text-{color}">
-                    {name}
+                    {cost_name}
                 </h5>
             </td>
             """
-        for clm in range(7):  # 7 days in one week
-            if i == 0:
+        for clm in range(NUMBER_OF_DAYS_IN_WEEK):
+            if row == 0:
                 html += f'<td class="bt-8-{color} bx-{color} pt-3 px-15">'
-            elif i == row - 1:
+            elif row == rows - 1:
                 html += f'<td class="bb-{color} bx-{color} px-15">'
             else:
                 html += f'<td class="bx-{color} px-15">'
 
-            data_ = get_data_byobj(obj, color, i, clm)
-
-            tag_name_modal = f"tag_name_{color}_{clm}_{i}"
             html += f"""
                 <p class="w-100 mb-2 bb-dashed-{color} text-end">
             """
 
-            if data_ is not None:
-                html += f"{data_['desc'][:15]} => € {'%.2f' % data_['value']}"
-            else:
-                html += "<br />"
+            data_row = get_data_row_from_kakebo_week(kakebo_week, cost_name, row, clm)
+            html += (
+                f"{data_row['desc'][:15]} => € {'%.2f' % data_row['value']}"
+                if data_row is not None
+                else "<br />"
+            )
 
+            tag_name_modal = f"tag_name_{color}_{clm}_{row}"
             if not disabled:
                 html += f"""
                         <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#{tag_name_modal}">
@@ -124,7 +155,8 @@ def render_table(
                                 <h5 class="modal-title" id="{tag_name_modal}_label">
                                     Descrizione e valore
                                 </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close"
+                                    data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                     
@@ -138,7 +170,7 @@ def render_table(
                 """
 
                 html += 'placeholder="description">'
-                html += data_["desc"] if data_ is not None else ""
+                html += data_row["desc"] if data_row is not None else ""
                 html += "</textarea>"
 
                 html += f"""
@@ -152,7 +184,7 @@ def render_table(
                                             placeholder="0.00" min="0" step="0.01"
                 """
 
-                html += f"value={data_['value']}>" if data_ is not None else ">"
+                html += f"value={data_row['value']}>" if data_row is not None else ">"
 
                 html += """
                                     </div>
@@ -168,17 +200,25 @@ def render_table(
                     </div>
                 </div>
                 """
-        # sidebar
-        html += render_sidebar(obj, i, color, row - 1)
-        # close row
-        html += "</tr>"
+
+        html += (
+            render_sidebar_in_week_table(kakebo_week, row, color, rows - 1) + "</tr>"
+        )
     html += "</tbody>"
     return mark_safe(html)
 
 
 @register.filter(is_safe=True)
 @register.simple_tag
-def render_table_total(totals: list, total_week: int):
+def render_table_total(list_total_costs: list[str]) -> str:
+    """Render table total.
+
+    Args:
+        list_total_costs (list[str]): List with all total costs.
+
+    Returns:
+        str: Render table total.
+    """
     html = """
     <tbody>
         <tr>
@@ -190,63 +230,26 @@ def render_table_total(totals: list, total_week: int):
                 </h5>
             </td>
     """
-    for value in totals:
+    for total_cost in list_total_costs:
         html += f"""
             <td class="b-slategrey px-15">
                 <p class="bb-dashed-slategrey mb-0 text-end">
-                    {value} €
+                    {total_cost} €
                 </p>
             </td>
         """
     html += f"""
-        <td class="px-15">
-            <p class="bg-slategrey mb-0 px-1 text-white">
-                totale della settimana
-            </p>
-        </td>
-        <td class="b-slategrey px-15">
-            <p class="bb-dashed-slategrey mb-0 text-end">
-                {total_week} €
-            </p>
-        </td>
-    """
-    html += """
+            <td class="px-15">
+                <p class="bg-slategrey mb-0 px-1 text-white">
+                    totale della settimana
+                </p>
+            </td>
+            <td class="b-slategrey px-15">
+                <p class="bb-dashed-slategrey mb-0 text-end">
+                    {sum(list(map(float, list_total_costs)))} €
+                </p>
+            </td>
         </tr>
     </tbody>
     """
     return mark_safe(html)
-
-
-def render_sidebar(kakebo, row: int, color: str, total_row: int):
-    # init cell html
-    html = f"""
-        <td class="m-3" width="7.4%">
-    """
-
-    type_cost = int(list_colors.index(color))
-    obj = KakeboWeekTable.objects.get(kakebo=kakebo, type_cost=type_cost)
-
-    # init and set value
-    if row == total_row:
-        val = (_("total"), obj.display_total_table)
-        html += f'<p class="mx-3 p-1 bg-{color} text-white">'
-    else:
-        data = obj.get_list_sort_cost(total_row)
-        if data and row < len(data):
-            data = data[row]
-            val = (data["desc"], data["value"])
-        else:
-            val = ("", "")
-        html += '<p class="p-3">'
-
-    html += f"""
-            {val[0]}
-            </p>
-        </td>
-        <td class="p-3" width="5%">
-            <p class="bb-dashed-{color} mb-2 text-end">
-             € {val[1]}
-            </p>
-        </td>
-    """
-    return html

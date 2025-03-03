@@ -1,14 +1,14 @@
 from django.urls import path
 
 from .views.kakebo import (
-    Index,
-    SelectYearWeekFormView,
-    KakeboWeekFormView,
     EndOfMonthBalanceSheetFormView,
+    IndexKakeboView,
+    KakeboWeekFormView,
+    SelectYearWeekFormView,
 )
 
 urlpatterns = [
-    path("", Index.as_view(), name="kakebo-home"),
+    path("", IndexKakeboView.as_view(), name="kakebo-home"),
     path("calendar/", SelectYearWeekFormView.as_view(), name="kakebo-calendar"),
     path(
         "calendar/<int:year>/", SelectYearWeekFormView.as_view(), name="kakebo-calendar"

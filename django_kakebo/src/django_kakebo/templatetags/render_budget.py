@@ -1,9 +1,8 @@
 from django import template
-from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
-from ..models import KakeboMonth
+
+from ..constants import CashFlowType, TOTAL_KAKEBO_MONTH_BUDGET
+from ..utils import get_user_from_user_kakebo_composed
 
 register = template.Library()
 
@@ -11,64 +10,72 @@ register = template.Library()
 @register.filter(is_safe=True)
 @register.simple_tag
 def render_month_budget(
-        kakebo: str, section: str, nr_row: int = 4, disabled: bool = False
-):
-    username, month, year = kakebo.split("-")
-    kw = {getattr(settings, "USER_FIELD_KAKEBO", "username"): username}
-    user = get_user_model().objects.get(**kw)
-    obj = KakeboMonth.objects.get(user=user, month=month, year=year)
-    budget = obj.budget
+    user_kakebo_composed: str, section: str, rows: int = 4, disabled: bool = False
+) -> str:
+    """Render kakebo month budget.
+
+    Args:
+        user_kakebo_composed (str): Value composed of user_val, month, year in one word
+            (e.g. 'username-month-year').
+        section (str): Section name.
+        rows (int, optional): Number of rows. Defaults to 5.
+        disabled (bool, optional): If True, disable input cost. Defaults to False.
+
+    Returns:
+        str: Return the render kakebo month budget.
+    """
+    if section not in CashFlowType:
+        raise ValueError("Invalid section.")
+
+    user, kakebo_month = get_user_from_user_kakebo_composed(user_kakebo_composed)
+    budget = kakebo_month.budget
     disabled = "disabled" if disabled else ""
 
     html = ""
-    for i in range(nr_row):
-        value = budget.get(f"_{section}_{i}")
-        val_date, val_descr, val_value = "", "", ""
-        if value:
-            val_date = value.get(f"date_{section}")
-            val_descr = value.get(f"descr_{section}")
-            val_value = "%.2f" % value.get(f"value_{section}") if value.get(f"value_{section}") else 0
+    for row in range(rows):
+        value = budget.get(f"_{section}_{row}", {})
+        val_date = value.get(f"date_{section}", "")
+        val_descr = value.get(f"descr_{section}", "")
+        val_value = (
+            "%.2f" % value[f"value_{section}"] if value.get(f"value_{section}") else 0
+        )
 
         html += f"""
         <tr>
             <td></td>
             <td class="bs-10-white">
                 <p class="bb-dashed-slategrey w-100 pt-3">
-                    <input name="form-{i}-date_{section}" id="id_form-{i}-date_{section}"
+                    <input name="form-{row}-date_{section}" id="id_form-{row}-date_{section}"
                         type="date" value="{val_date}" {disabled}>
                 </p>
             </td>
             <td class="bs-10-white">
                 <p class="bb-dashed-slategrey w-100 pt-3">
-                    <input name="form-{i}-descr_{section}" id="id_form-{i}-descr_{section}"
+                    <input name="form-{row}-descr_{section}" id="id_form-{row}-descr_{section}"
                     value="{val_descr}" {disabled}>
                 </p>
             </td>
             <td class="bs-10-white">
                 <p class="bb-dashed-slategrey w-100 pt-3">
-                    <input name="form-{i}-value_{section}" id="id_form-{i}-value_{section}"
+                    <input name="form-{row}-value_{section}" id="id_form-{row}-value_{section}"
                     value="{val_value}" {disabled}>
                 </p>
             </td>
         </tr>
         """
 
-    total_ = [
-        (_("total income"), "cyan", obj.display_totals_budget[0]),
-        (_("total steady outflow"), "blue", obj.display_totals_budget[1]),
-    ]
-    total_ = total_[0] if section == "income" else total_[1]
+    total_kakebo_month_dict = TOTAL_KAKEBO_MONTH_BUDGET[CashFlowType[section].value]
     html += f"""
         <tr>
             <td></td>
             <td colspan="2" class="bs-10-white">
-                <p class="w-100 pt-3 ps-3 bg-{total_[1]}-basic text-white">
-                    {total_[0]}
+                <p class="w-100 pt-3 ps-3 bg-{total_kakebo_month_dict["color"]}-basic text-white">
+                    {total_kakebo_month_dict["description"]}
                 </p>
             </td>
             <td class="bs-10-white">
                 <p class="bb-dashed-slategrey w-100 pt-3">
-                    € {total_[2]}
+                    € {getattr(kakebo_month, total_kakebo_month_dict["display_property"], 0)}
                 </p>
             </td>
         </tr>

@@ -5,20 +5,23 @@ from .models import KakeboMonth, KakeboWeek, KakeboWeekTable, KakeboEndOfMonthBa
 
 @admin.register(KakeboMonth)
 class KakeboMonthAdmin(admin.ModelAdmin):
-    pass
+    """Kakebo month model admin."""
+
+    autocomplete_fields = ["user"]
 
 
 @admin.register(KakeboWeek)
 class KakeboWeekAdmin(admin.ModelAdmin):
-    search_fields = ["kakebo"]
+    """Kakebo week model admin."""
+
     autocomplete_fields = ["user"]
 
 
 @admin.register(KakeboWeekTable)
 class KakeboWeekTableAdmin(admin.ModelAdmin):
-    pass
+    """Kakebo week table model admin."""
 
 
 @admin.register(KakeboEndOfMonthBalance)
 class KakeboEndOfMonthBalanceAdmin(admin.ModelAdmin):
-    pass
+    """Kakebo end of month balance model admin."""
