@@ -1,8 +1,9 @@
-import os
 import glob
+from pathlib import Path
+
 import setuptools
 
-__version__ = "0.1.7"
+__version__ = "0.2.0"
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -10,12 +11,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 def get_install_requires() -> list:
     """Returns requirements.txt parsed to a list"""
-    fname = os.path.join(os.path.dirname(__file__), "requirements.txt")
-    targets = []
-    if os.path.exists(fname):
-        with open(fname, 'r') as f:
-            targets = f.read().splitlines()
-    return targets
+    path_file = Path(__file__).parent / "requirements.txt"
+    if path_file.exists():
+        with open(path_file) as f:
+            return f.read().splitlines()
+    return []
 
 
 setuptools.setup(
