@@ -9,8 +9,12 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 
-def get_install_requires() -> list:
-    """Returns requirements.txt parsed to a list"""
+def get_install_requires() -> list[str]:
+    """Returns requirements.txt parsed to a list.
+
+    Returns:
+        list[str]: Requirements parsed to a list.
+    """
     path_file = Path(__file__).parent / "requirements.txt"
     if path_file.exists():
         with open(path_file) as f:
@@ -36,7 +40,7 @@ setuptools.setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Gnu General Public License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
@@ -46,22 +50,21 @@ setuptools.setup(
     ],
     include_package_data=True,
     packages=[
-        "django_kakebo", "django_kakebo.migrations", "django_kakebo.src.django_kakebo",
-        "django_kakebo.src.django_kakebo.migrations", "django_kakebo.src.django_kakebo.templatetags",
-        "django_kakebo.src.django_kakebo.views", "django_kakebo.src.user"
+        "django_kakebo", "django_kakebo.migrations", "django_kakebo.templatetags",
+        "django_kakebo.views", "django_kakebo_user"
     ],
     data_files=[
         (
-            "static",
-            [fn for fn in glob.iglob("django_kakebo/src/django_kakebo/static/**/*", recursive=True) if "." in fn],
+            "django_kakebo_static",
+            [filename for filename in glob.iglob("django_kakebo/static/**/*", recursive=True) if "." in filename],
         ),
         (
-            "themes",
-            [fn for fn in glob.iglob("django_kakebo/src/themes/**/*", recursive=True) if "." in fn],
+            "django_kakebo_templates",
+            [filename for filename in glob.iglob("django_kakebo_templates/**/*", recursive=True) if "." in filename],
         ),
         (
-            "static_user",
-            [fn for fn in glob.iglob("django_kakebo/src/user/static/**/*", recursive=True) if "." in fn],
+            "django_kakebo_user_static",
+            [filename for filename in glob.iglob("django_kakebo_user/static/**/*", recursive=True) if "." in filename],
         ),
     ],
     install_requires=get_install_requires(),
