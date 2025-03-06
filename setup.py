@@ -3,7 +3,7 @@ from pathlib import Path
 
 import setuptools
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -55,15 +55,15 @@ setuptools.setup(
     ],
     data_files=[
         (
-            "django_kakebo_static",
+            "django_kakebo/static",
             [filename for filename in glob.iglob("django_kakebo/static/**/*", recursive=True) if "." in filename],
         ),
         (
-            "django_kakebo_templates",
+            "django_kakebo/templates",
             [filename for filename in glob.iglob("django_kakebo_templates/**/*", recursive=True) if "." in filename],
         ),
         (
-            "django_kakebo_user_static",
+            "django_kakebo/user_static",
             [filename for filename in glob.iglob("django_kakebo_user/static/**/*", recursive=True) if "." in filename],
         ),
     ],
