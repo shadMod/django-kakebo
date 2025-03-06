@@ -3,7 +3,7 @@ from pathlib import Path
 
 import setuptools
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
