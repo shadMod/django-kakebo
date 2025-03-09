@@ -3,7 +3,7 @@ from pathlib import Path
 
 import setuptools
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -27,7 +27,7 @@ setuptools.setup(
     version=__version__,
     author="shadmod",
     author_email="support@shadmod.it",
-    description="A simple site made with django and exploiting the kakebo method",
+    description="A simple django app that exploiting the kakebo method ('primitive_user' app is included).",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/shadMod/django-kakebo/",
